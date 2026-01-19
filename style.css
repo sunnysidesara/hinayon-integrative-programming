@@ -1,0 +1,20 @@
+.lorem {
+  color: blue;
+  background-color: pink;
+  font: ;
+}
+
+.delete {
+  color: white;
+  background: red;
+  font-size: larger;
+  font-family: Arial, Helvetica, sans-serif;
+  border-radius: 8px;
+  border-color: red;
+  font-weight: 600;
+}
+
+.center {
+  display: block;
+  margin: 0 auto;
+}
