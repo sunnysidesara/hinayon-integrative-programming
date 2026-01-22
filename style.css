@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 /* BODY */
@@ -13,13 +13,14 @@ body {
   line-height: 1.6;
 }
 
-/* HERO SECTION – FUTURISTIC MARS */
+/* HERO SECTION */
 .hero {
   position: relative;
   height: 100vh;
   background:
-    radial-gradient(circle at bottom, rgba(255, 90, 40, 0.4), transparent 55%),
-    linear-gradient(to top, #2b0f05, #6b2a12, #a8421f);
+    linear-gradient(to top, rgba(53, 43, 43, 0.6), rgba(49, 39, 39, 0.25)),
+    url("mars.jpg") center / cover no-repeat;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,9 +32,7 @@ body {
 .overlay {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.05), transparent 40%),
-    rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1;
 }
 
@@ -44,8 +43,8 @@ body {
   left: 50%;
   transform: translateX(-50%);
   width: 140%;
-  height: 320px;
-  background: radial-gradient(circle, #ff6a3d 0%, #7a1f0f 45%, transparent 70%);
+  height: 300px;
+  background: radial-gradient(circle, #ff6a3d, transparent 70%);
   filter: blur(45px);
   z-index: 2;
 }
@@ -54,22 +53,21 @@ body {
 .hero-content {
   position: relative;
   z-index: 3;
-  max-width: 700px;
+  max-width: 720px;
   padding: 20px;
 }
 
 .hero-content h1 {
-  font-size: 3.8rem;
+  font-size: 4rem;
   letter-spacing: 3px;
-  margin-bottom: 10px;
-  text-shadow:
-    0 0 20px rgba(255, 106, 61, 0.5),
-    0 0 40px rgba(255, 106, 61, 0.25);
+  margin-bottom: 15px;
+  color: #fff1eb;
+  text-shadow: 0 0 20px #ff6a3d;
 }
 
 .hero-content p {
   font-size: 1.3rem;
-  opacity: 0.85;
+  color: #ffb285;
   margin-bottom: 35px;
 }
 
@@ -80,27 +78,94 @@ body {
   border: 2px solid #ff6a3d;
   color: #ff6a3d;
   font-size: 1rem;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .cta-btn:hover {
-  background-color: #ff6a3d;
-  color: #000;
-  box-shadow: 0 0 25px rgba(255, 106, 61, 0.6);
+  background: #ff6a3d;
+  color: #0b0d10;
+  box-shadow: 0 0 30px #ff6a3d;
+  transform: scale(1.05);
 }
 
 /* FEATURES SECTION */
 .features {
   padding: 90px 10%;
-  background-color: #111318;
+  background:
+    linear-gradient(to top, rgba(53, 43, 43, 0.6), rgba(49, 39, 39, 0.25)),
+    url("stars.jpeg") center / cover no-repeat;
 }
 
+/* FUTURE ALERT BAR BASE */
+.future-alert {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  background: linear-gradient(90deg, #0c0202, #110d0a, #110703);
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* TOP ALERT — BIG */
+.future-alert-top {
+  padding: 20px 0;
+}
+
+.future-alert-top p {
+  font-size: 1.8rem;
+}
+
+/* BOTTOM ALERT — SMALL */
+.future-alert-bottom {
+  padding: 10px 0;
+}
+
+.future-alert-bottom p {
+  font-size: 1rem;
+}
+
+/* MOVING TEXT INFINITE */
+.future-alert p {
+  display: inline-block;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #f80511;
+
+  /* Duplicate text for seamless scroll */
+  white-space: nowrap;
+}
+
+.future-alert p::after {
+  content: " 🚨 THE NEW FUTURE! 🚨 THE NEW FUTURE! 🚨 THE NEW FUTURE! "; /* duplicate message */
+  padding-left: 2rem;
+}
+
+.future-alert p {
+  animation: alertScroll 12s linear infinite;
+}
+
+/* SCROLL ANIMATION */
+@keyframes alertScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%); /* scroll half, since duplicated */
+  }
+}
+
+/* FEATURES TITLE */
 .features h2 {
   text-align: center;
   font-size: 2.6rem;
   margin-bottom: 60px;
+  color: #ffffff;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.4),
+    0 0 18px rgba(255, 106, 61, 0.6),
+    0 0 35px rgba(255, 106, 61, 0.4);
 }
 
 /* FEATURE GRID */
@@ -110,19 +175,18 @@ body {
   gap: 35px;
 }
 
-/* FEATURE CARDS */
+/* FEATURE CARD */
 .feature-card {
-  background-color: #1a1d23;
+  background: rgba(26, 29, 35, 0.75);
+  border: 1px solid rgba(255, 106, 61, 0.3);
   padding: 35px;
-  border: 1px solid #2a2d34;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  backdrop-filter: blur(6px);
+  transition: 0.3s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 0 30px rgba(255, 106, 61, 0.35);
+  transform: translateY(-10px);
+  box-shadow: 0 0 25px rgba(255, 106, 61, 0.6);
 }
 
 .feature-card h3 {
@@ -132,7 +196,6 @@ body {
 
 /* FOOTER */
 footer {
-  background-color: #0b0d10;
   padding: 22px;
   text-align: center;
   font-size: 0.9rem;
