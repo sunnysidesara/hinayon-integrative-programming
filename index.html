@@ -6,6 +6,21 @@
     <title>Mars Colonization Initiative</title>
     <link rel="stylesheet" href="style.css" />
   </head>
+  <body>
+    <!-- Navigation Header -->
+    <header class="site-header">
+      <nav class="main-nav">
+        <div class="nav-logo">
+          <a href="index.html" class="logo-text">MARS INITIATIVE</a>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#smart-city">Smart City</a></li>
+          <li><a href="#agencies">Agencies</a></li>
+          <li><a href="login.html" class="login-nav-btn">Login</a></li>
+        </ul>
+      </nav>
+    </header>
 
     <div class="future-alert future-alert-top">
       <p data-text="🚨 THE NEW FUTURE! 🚨 THE NEW FUTURE! 🚨 THE NEW FUTURE!">
@@ -13,7 +28,7 @@
       </p>
     </div>
 
-    <section class="hero">
+    <section class="hero" id="home">
       <div class="overlay"></div>
       <div class="mars-horizon"></div>
       <div class="hero-content">
@@ -23,11 +38,11 @@
           global space agencies and using advanced technology to make
           <b>Mars</b> our next home.
         </p>
-        <button class="cta-btn">Join the Mission</button>
+        <a href="login.html" class="cta-btn">Join the Mission</a>
       </div>
     </section>
 
-    <section class="mars-life">
+    <section class="mars-life" id="smart-city">
       <div class="section-video-bg smart-city-video-bg">
         <video autoplay muted loop playsinline>
           <source src="smart city.mp4" type="video/mp4" />
@@ -136,7 +151,7 @@
       </div>
     </section>
 
-    <section class="agencies">
+    <section class="agencies" id="agencies">
       <div class="section-video-bg agencies-video-bg">
         <video autoplay muted loop playsinline>
           <source src="space-agencies.mp4" type="video/mp4" />
@@ -214,7 +229,6 @@
       </div>
     </section>
 
-  
     <div class="future-alert future-alert-top">
       <p data-text="🚨 THE NEW FUTURE! 🚨 THE NEW FUTURE! 🚨 THE NEW FUTURE!">
         🚨 THE NEW FUTURE! 🚨 THE NEW FUTURE! 🚨 THE NEW FUTURE!
