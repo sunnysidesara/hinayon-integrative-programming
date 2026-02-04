@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mars Colony | Account Settings</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="dashboard-page">
+    <!-- Dashboard Navigation -->
+    <nav class="dashboard-nav">
+      <div class="dashboard-nav-container">
+        <a href="index.html" class="dashboard-nav-logo">MARS COLONY</a>
+        <ul class="dashboard-nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="login.html">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Background Effects -->
+    <div class="dashboard-bg-effect">
+      <div class="dashboard-dust"></div>
+      <div class="dashboard-scan"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="settings-header">
+        <h1>⚙️ Colony Settings</h1>
+        <p>
+          Configure your Mars Colony account preferences and security settings
+        </p>
+      </header>
+
+      <div class="settings-container">
+        <!-- Settings Form -->
+        <form class="settings-form">
+          <!-- Account Settings Section -->
+          <section class="settings-section">
+            <h2 class="section-title">
+              <span class="section-icon">📧</span>
+              Account Information
+            </h2>
+
+            <!-- Change Email -->
+            <div class="form-group">
+              <label for="change-email">Change Colony Email</label>
+              <div class="field-note">
+                This field will be synchronized with an external identity
+                provider in later phases.
+              </div>
+              <input
+                type="email"
+                id="change-email"
+                class="form-control"
+                placeholder="current@marscolony.space"
+                value="alex.chen@marscolony.space"
+              />
+              <div class="field-hint">
+                Your email is used for all colony communications and
+                notifications
+              </div>
+            </div>
+
+            <!-- Change Address -->
+            <div class="form-group">
+              <label for="change-address">Change Colony Address</label>
+              <div class="field-note">
+                Geographic data binding will be introduced in future builds.
+              </div>
+              <textarea
+                id="change-address"
+                class="form-control textarea-control"
+                rows="3"
+                placeholder="Enter your Mars habitat address"
+              >
+Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
+              >
+              <div class="field-hint">
+                Format: [Habitat Unit], [Settlement], [Region], Mars
+              </div>
+            </div>
+          </section>
+
+          <!-- Security Settings Section -->
+          <section class="settings-section">
+            <h2 class="section-title">
+              <span class="section-icon">🔐</span>
+              Security Settings
+            </h2>
+
+            <!-- Change Password -->
+            <div class="form-group">
+              <label for="current-password">Current Access Code</label>
+              <input
+                type="password"
+                id="current-password"
+                class="form-control"
+                placeholder="Enter current passcode"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="new-password">New Access Code</label>
+              <div class="field-note">
+                Argon2id hashing with memory-hard parameters will be activated
+                in future builds.
+              </div>
+              <input
+                type="password"
+                id="new-password"
+                class="form-control"
+                placeholder="Create new secure passcode"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="confirm-password">Confirm New Access Code</label>
+              <input
+                type="password"
+                id="confirm-password"
+                class="form-control"
+                placeholder="Re-enter new passcode"
+              />
+            </div>
+
+            <!-- Password Requirements -->
+            <div class="password-requirements settings-req">
+              <h4>Security Requirements:</h4>
+              <p>
+                <span class="requirement-icon">🔒</span> Minimum 12 characters
+              </p>
+              <p>
+                <span class="requirement-icon">🔒</span> Uppercase and lowercase
+                letters
+              </p>
+              <p>
+                <span class="requirement-icon">🔒</span> At least 2 numbers
+                (0-9)
+              </p>
+              <p>
+                <span class="requirement-icon">🔒</span> Special characters
+                (#$%&@!)
+              </p>
+              <p>
+                <span class="requirement-icon">🔒</span> No personal information
+              </p>
+            </div>
+          </section>
+
+          <!-- Preferences Section -->
+          <section class="settings-section">
+            <h2 class="section-title">
+              <span class="section-icon">🎨</span>
+              Interface Preferences
+            </h2>
+
+            <!-- Theme Option -->
+            <div class="form-group">
+              <label for="theme-select">Colony Interface Theme</label>
+              <div class="theme-options">
+                <div class="theme-option">
+                  <input type="radio" id="theme-mars" name="theme" checked />
+                  <label for="theme-mars" class="theme-label">
+                    <span class="theme-preview mars-theme"></span>
+                    <span class="theme-name">Mars Standard</span>
+                    <span class="theme-desc">Orange/black colony theme</span>
+                  </label>
+                </div>
+
+                <div class="theme-option">
+                  <input type="radio" id="theme-dark" name="theme" />
+                  <label for="theme-dark" class="theme-label">
+                    <span class="theme-preview dark-theme"></span>
+                    <span class="theme-name">Deep Space</span>
+                    <span class="theme-desc">Dark blue/black theme</span>
+                  </label>
+                </div>
+
+                <div class="theme-option">
+                  <input type="radio" id="theme-light" name="theme" />
+                  <label for="theme-light" class="theme-label">
+                    <span class="theme-preview light-theme"></span>
+                    <span class="theme-name">Laboratory</span>
+                    <span class="theme-desc">Light interface theme</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Preferences -->
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="notifications" checked />
+                <span class="checkmark"></span>
+                Enable colony notifications
+              </label>
+
+              <label class="checkbox-label">
+                <input type="checkbox" id="location-sharing" checked />
+                <span class="checkmark"></span>
+                Share location with mission control
+              </label>
+
+              <label class="checkbox-label">
+                <input type="checkbox" id="data-sync" />
+                <span class="checkmark"></span>
+                Automatic data synchronization
+              </label>
+            </div>
+          </section>
+
+          <!-- Danger Zone Section -->
+          <section class="settings-section danger-zone">
+            <h2 class="section-title">
+              <span class="section-icon">⚠️</span>
+              Mission Control
+            </h2>
+
+            <div class="danger-actions">
+              <button type="button" class="danger-btn">
+                <span class="btn-icon">🚀</span>
+                Request Mission Transfer
+              </button>
+
+              <button type="button" class="danger-btn delete-btn">
+                <span class="btn-icon">🗑️</span>
+                Deactivate Colony Account
+              </button>
+            </div>
+
+            <div class="danger-note">
+              <span class="warning-icon">⚠️</span>
+              Account deactivation will remove all mission data and cannot be
+              undone.
+            </div>
+          </section>
+
+          <!-- Save Button -->
+          <div class="form-actions">
+            <a href="profile.html" class="back-btn">
+              <span class="btn-icon">←</span>
+              Back to Profile
+            </a>
+
+            <button type="button" class="save-btn">
+              <span class="btn-icon">💾</span>
+              Save All Changes
+            </button>
+          </div>
+        </form>
+
+        <!-- Settings Sidebar -->
+        <aside class="settings-sidebar">
+          <div class="sidebar-card">
+            <h3><span class="sidebar-icon">ℹ️</span> About Settings</h3>
+            <p>
+              These settings control your Mars Colony experience. Changes are
+              applied immediately to your account.
+            </p>
+          </div>
+
+          <div class="sidebar-card">
+            <h3><span class="sidebar-icon">🔧</span> System Status</h3>
+            <div class="status-item">
+              <span class="status-label">Database:</span>
+              <span class="status-value online">Synchronized</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Security:</span>
+              <span class="status-value online">Active</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Last Updated:</span>
+              <span class="status-value">Sol 1,352</span>
+            </div>
+          </div>
+
+          <div class="sidebar-card">
+            <h3><span class="sidebar-icon">📞</span> Need Help?</h3>
+            <p>Contact Mission Control:</p>
+            <a href="#" class="support-link"
+              >mission-control@marscolony.space</a
+            >
+            <div class="emergency-note">
+              <span class="emergency-icon">🚨</span>
+              For emergencies, use habitat comms unit
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <p>Mars Colony Mission Control © 2024 - Settings v2.1.4</p>
+      <p class="footer-note">All changes are logged for mission security</p>
+    </footer>
+  </body>
+</html>

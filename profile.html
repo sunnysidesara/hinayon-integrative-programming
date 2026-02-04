@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mars Colony | User Profile</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="dashboard-page">
+    <!-- Dashboard Navigation -->
+    <nav class="dashboard-nav">
+      <div class="dashboard-nav-container">
+        <a href="index.html" class="dashboard-nav-logo">MARS COLONY</a>
+        <ul class="dashboard-nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="login.html">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Background Effects -->
+    <div class="dashboard-bg-effect">
+      <div class="dashboard-dust"></div>
+      <div class="dashboard-scan"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="profile-header">
+        <h1>Astronaut Profile</h1>
+        <p>Mars Colony Mission Profile and Personal Informations</p>
+      </header>
+
+      <div class="profile-container">
+        <!-- Profile Card Section -->
+        <section class="profile-card">
+          <div class="profile-avatar">
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=MarsAstronaut&backgroundColor=0b0d10&hairColor=ff6a3d&clothingColor=2a120b"
+              alt="Astronaut Avatar"
+              class="avatar-image"
+            />
+          </div>
+
+          <div class="profile-info">
+            <h2 class="profile-name">Commander Sara Hinayon</h2>
+            <p class="profile-email">sara.hinayon@marscolony.space</p>
+            <p class="profile-address">
+              Habitat Unit 7B, Olympus Mons Settlement, Mars
+            </p>
+
+            <div class="profile-status">
+              <span class="status-indicator active"></span>
+              <span class="status-text">Mission Status: Active</span>
+            </div>
+          </div>
+
+          <a href="settings.html" class="settings-link-btn">
+            <span>⚙️</span> Account Settings
+          </a>
+        </section>
+
+        <!-- Info Sections -->
+        <div class="profile-sections">
+          <!-- About Me Section -->
+          <section class="info-section">
+            <h3><span>👨‍🚀</span> About Me</h3>
+            <div class="info-content">
+              <p>
+                Hi!✨ I am Sara, a lead exobiologist with 8 years of Mars
+                surface experience. Specialized in Martian soil analysis and
+                habitat sustainability systems. Currently overseeing Phase 3 of
+                the Olympus Mons settlement expansion. Mars is a beautiful
+                place, so come and join us!
+              </p>
+
+              <div class="info-details">
+                <div class="detail-item">
+                  <span class="detail-label">Mission ID:</span>
+                  <span class="detail-value">MC-2047-OD</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Clearance Level:</span>
+                  <span class="detail-value">Gamma-9</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Years on Mars:</span>
+                  <span class="detail-value">3.7 Earth Years</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Account Details Section -->
+          <section class="info-section">
+            <h3><span>📊</span> Account Details</h3>
+            <div class="info-content">
+              <div class="detail-grid">
+                <div class="detail-card">
+                  <h4>Mission Progress</h4>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 78%"></div>
+                  </div>
+                  <span class="progress-text">78% Complete</span>
+                </div>
+
+                <div class="detail-card">
+                  <h4>Resource Allocation</h4>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 92%"></div>
+                  </div>
+                  <span class="progress-text">92% Available</span>
+                </div>
+
+                <div class="detail-card">
+                  <h4>Team Members</h4>
+                  <div class="stat-value">14</div>
+                  <span class="stat-label">Active Astronauts</span>
+                </div>
+
+                <div class="detail-card">
+                  <h4>Mars Days</h4>
+                  <div class="stat-value">1,352</div>
+                  <span class="stat-label">(Sols)</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- User Bio Section -->
+          <section class="info-section">
+            <h3><span>📝</span> Personal Log</h3>
+            <div class="info-content">
+              <div class="bio-entry">
+                <span class="bio-date">Sol 1,352</span>
+                <p>
+                  "The Valles Marineris excavation team discovered promising
+                  mineral deposits today. Initial analysis suggests high
+                  concentrations of hydrated minerals. If confirmed, this could
+                  significantly advance our water reclamation efforts."
+                </p>
+              </div>
+
+              <div class="bio-entry">
+                <span class="bio-date">Sol 1,348</span>
+                <p>
+                  "Completed atmospheric pressure recalibration in Sector 4. The
+                  new terraforming algorithms are showing a 0.3% increase in
+                  surface oxygen production. Slow progress, but progress
+                  nonetheless."
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <p>Mars Colony Mission Control © 2024 - All systems operational</p>
+      <p class="footer-note">Profile data synchronized with orbital database</p>
+    </footer>
+  </body>
+</html>
