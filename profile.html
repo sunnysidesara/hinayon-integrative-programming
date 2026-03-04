@@ -13,7 +13,7 @@
         <a href="index.html" class="dashboard-nav-logo">MARS COLONY</a>
         <ul class="dashboard-nav-links">
           <li><a href="index.html">Home</a></li>
-          <li><a href="login.html">Logout</a></li>
+          <li><a href="login.html" id="logout-btn">Logout</a></li>
         </ul>
       </div>
     </nav>
@@ -43,8 +43,9 @@
           </div>
 
           <div class="profile-info">
-            <h2 class="profile-name">Commander Sara Hinayon</h2>
-            <p class="profile-email">sara.hinayon@marscolony.space</p>
+            <!-- DYNAMIC: These will be filled by JavaScript -->
+            <h2 class="profile-name">Loading...</h2>
+            <p class="profile-email">Loading...</p>
             <p class="profile-address">
               Habitat Unit 7B, Olympus Mons Settlement, Mars
             </p>
@@ -62,30 +63,31 @@
 
         <!-- Info Sections -->
         <div class="profile-sections">
-          <!-- About Me Section -->
+          <!-- About Me Section - DYNAMIC -->
           <section class="info-section">
             <h3><span>👨‍🚀</span> About Me</h3>
             <div class="info-content">
-              <p>
-                Hi!✨ I am Sara, a lead exobiologist with 8 years of Mars
-                surface experience. Specialized in Martian soil analysis and
-                habitat sustainability systems. Currently overseeing Phase 3 of
-                the Olympus Mons settlement expansion. Mars is a beautiful
-                place, so come and join us!!
-              </p>
+              <!-- This paragraph will be filled by JavaScript -->
+              <p class="about-text">Loading your profile...</p>
 
               <div class="info-details">
                 <div class="detail-item">
                   <span class="detail-label">Mission ID:</span>
-                  <span class="detail-value">MC-2047-OD</span>
+                  <span class="detail-value" id="mission-id">MC-XXXX-XX</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Clearance Level:</span>
                   <span class="detail-value">Gamma-9</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">Years on Mars:</span>
-                  <span class="detail-value">3.7 Earth Years</span>
+                  <span class="detail-label">Colony Role:</span>
+                  <span class="detail-value" id="user-role">Loading...</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Departure:</span>
+                  <span class="detail-value" id="user-departure"
+                    >Loading...</span
+                  >
                 </div>
               </div>
             </div>
@@ -127,31 +129,20 @@
             </div>
           </section>
 
-          <!-- User Bio Section -->
+          <!-- User Bio Section - DYNAMIC -->
           <section class="info-section">
             <h3><span>📝</span> Personal Log</h3>
-            <div class="info-content">
+            <div class="info-content" id="personal-log">
               <div class="bio-entry">
-                <span class="bio-date">Sol 1,352</span>
-                <p>
-                  "The Valles Marineris excavation team discovered promising
-                  mineral deposits today. Initial analysis suggests high
-                  concentrations of hydrated minerals. If confirmed, this could
-                  significantly advance our water reclamation efforts."
-                </p>
-              </div>
-
-              <div class="bio-entry">
-                <span class="bio-date">Sol 1,348</span>
-                <p>
-                  "Completed atmospheric pressure recalibration in Sector 4. The
-                  new terraforming algorithms are showing a 0.3% increase in
-                  surface oxygen production. Slow progress, but progress
-                  nonetheless."
+                <span class="bio-date" id="current-date"></span>
+                <p id="welcome-log">
+                  Welcome to the Mars Colony! Your journey begins now.
                 </p>
               </div>
             </div>
           </section>
+
+          <!-- Registration Date - Will be added by JavaScript -->
         </div>
       </div>
     </main>
@@ -161,5 +152,6 @@
       <p>Mars Colony Mission Control © 2024 - All systems operational</p>
       <p class="footer-note">Profile data synchronized with orbital database</p>
     </footer>
+    <script src="script.js"></script>
   </body>
 </html>

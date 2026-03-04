@@ -13,7 +13,7 @@
         <a href="index.html" class="dashboard-nav-logo">MARS COLONY</a>
         <ul class="dashboard-nav-links">
           <li><a href="index.html">Home</a></li>
-          <li><a href="login.html">Logout</a></li>
+          <li><a href="login.html" id="logout-btn">Logout</a></li>
         </ul>
       </div>
     </nav>
@@ -55,7 +55,7 @@
                 id="change-email"
                 class="form-control"
                 placeholder="current@marscolony.space"
-                value="alex.chen@marscolony.space"
+                value=""
               />
               <div class="field-hint">
                 Your email is used for all colony communications and
@@ -74,9 +74,7 @@
                 class="form-control textarea-control"
                 rows="3"
                 placeholder="Enter your Mars habitat address"
-              >
-Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
-              >
+              ></textarea>
               <div class="field-hint">
                 Format: [Habitat Unit], [Settlement], [Region], Mars
               </div>
@@ -129,22 +127,18 @@ Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
             <div class="password-requirements settings-req">
               <h4>Security Requirements:</h4>
               <p>
-                <span class="requirement-icon">🔒</span> Minimum 12 characters
+                <span class="requirement-icon">🔒</span> Minimum 8 characters
               </p>
               <p>
                 <span class="requirement-icon">🔒</span> Uppercase and lowercase
                 letters
               </p>
               <p>
-                <span class="requirement-icon">🔒</span> At least 2 numbers
-                (0-9)
+                <span class="requirement-icon">🔒</span> At least 1 number (0-9)
               </p>
               <p>
                 <span class="requirement-icon">🔒</span> Special characters
-                (#$%&@!)
-              </p>
-              <p>
-                <span class="requirement-icon">🔒</span> No personal information
+                (!@#$%^&*)
               </p>
             </div>
           </section>
@@ -158,10 +152,16 @@ Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
 
             <!-- Theme Option -->
             <div class="form-group">
-              <label for="theme-select">Colony Interface Theme</label>
+              <label>Colony Interface Theme</label>
               <div class="theme-options">
                 <div class="theme-option">
-                  <input type="radio" id="theme-mars" name="theme" checked />
+                  <input
+                    type="radio"
+                    id="theme-mars"
+                    name="theme"
+                    value="mars"
+                    checked
+                  />
                   <label for="theme-mars" class="theme-label">
                     <span class="theme-preview mars-theme"></span>
                     <span class="theme-name">Mars Standard</span>
@@ -170,7 +170,12 @@ Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
                 </div>
 
                 <div class="theme-option">
-                  <input type="radio" id="theme-dark" name="theme" />
+                  <input
+                    type="radio"
+                    id="theme-dark"
+                    name="theme"
+                    value="dark"
+                  />
                   <label for="theme-dark" class="theme-label">
                     <span class="theme-preview dark-theme"></span>
                     <span class="theme-name">Deep Space</span>
@@ -179,7 +184,12 @@ Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
                 </div>
 
                 <div class="theme-option">
-                  <input type="radio" id="theme-light" name="theme" />
+                  <input
+                    type="radio"
+                    id="theme-light"
+                    name="theme"
+                    value="light"
+                  />
                   <label for="theme-light" class="theme-label">
                     <span class="theme-preview light-theme"></span>
                     <span class="theme-name">Laboratory</span>
@@ -219,12 +229,16 @@ Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
             </h2>
 
             <div class="danger-actions">
-              <button type="button" class="danger-btn">
+              <button type="button" class="danger-btn" id="transfer-btn">
                 <span class="btn-icon">🚀</span>
                 Request Mission Transfer
               </button>
 
-              <button type="button" class="danger-btn delete-btn">
+              <button
+                type="button"
+                class="danger-btn delete-btn"
+                id="delete-btn"
+              >
                 <span class="btn-icon">🗑️</span>
                 Deactivate Colony Account
               </button>
@@ -239,12 +253,12 @@ Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
 
           <!-- Save Button -->
           <div class="form-actions">
-            <a href="profile.html" class="back-btn">
+            <a href="profile.html" class="back-btn" id="back-to-profile">
               <span class="btn-icon">←</span>
               Back to Profile
             </a>
 
-            <button type="button" class="save-btn">
+            <button type="button" class="save-btn" id="save-settings">
               <span class="btn-icon">💾</span>
               Save All Changes
             </button>
@@ -273,14 +287,14 @@ Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
             </div>
             <div class="status-item">
               <span class="status-label">Last Updated:</span>
-              <span class="status-value">Sol 1,352</span>
+              <span class="status-value" id="last-updated">Sol 1,352</span>
             </div>
           </div>
 
           <div class="sidebar-card">
             <h3><span class="sidebar-icon">📞</span> Need Help?</h3>
             <p>Contact Mission Control:</p>
-            <a href="#" class="support-link"
+            <a href="#" class="support-link" id="support-email"
               >mission-control@marscolony.space</a
             >
             <div class="emergency-note">
@@ -297,5 +311,6 @@ Habitat Unit 7B, Olympus Mons Settlement, Mars</textarea
       <p>Mars Colony Mission Control © 2024 - Settings</p>
       <p class="footer-note">All changes are logged for mission security</p>
     </footer>
+    <script src="script.js"></script>
   </body>
 </html>
