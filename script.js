@@ -1,9 +1,3 @@
-/**
- * Mars Colonization Initiative
- * Authentication Validation Script
- * Handles signup, login, profile display, and settings
- */
-
 // ==================== INITIALIZATION ====================
 document.addEventListener("DOMContentLoaded", function () {
   initializeSignupForm();
@@ -124,9 +118,6 @@ function initializeSettingsPage() {
   setupSettingsListeners(currentUser, users);
 }
 
-/**
- * Loads user data into settings form
- */
 function loadUserSettings(user) {
   // Load email
   const emailField = document.getElementById("change-email");
@@ -162,9 +153,6 @@ function loadUserSettings(user) {
   }
 }
 
-/**
- * Sets up event listeners for settings page
- */
 function setupSettingsListeners(currentUser, users) {
   // Save All Changes button
   const saveBtn = document.querySelector(".save-btn");
@@ -218,9 +206,6 @@ function setupSettingsListeners(currentUser, users) {
   }
 }
 
-/**
- * Saves all settings changes
- */
 function saveSettings(currentUser, users) {
   const emailField = document.getElementById("change-email");
   const addressField = document.getElementById("change-address");
