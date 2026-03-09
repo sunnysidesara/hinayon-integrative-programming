@@ -1,28 +1,70 @@
+// ==================== MARS COLONIZATION INITIATIVE ====================
+// Main JavaScript File - All functionality in one place
+
 // ==================== INITIALIZATION ====================
 document.addEventListener("DOMContentLoaded", function () {
+  // Create default admin account if it doesn't exist
+  createDefaultAdmin();
+
   initializeSignupForm();
   initializeLoginForm();
   initializeProfilePage();
-  initializeSettingsPage(); // New function for settings
+  initializeSettingsPage();
   initializeLogout();
+  initializeManageUsers();
 });
 
-// ==================== PROFILE PAGE DISPLAY ====================
+// ==================== CREATE DEFAULT ADMIN ====================
+function createDefaultAdmin() {
+  const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+  const manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
+
+  const adminEmail = "marsinitiative@admin.com";
+  const adminExists = users.some((user) => user.email === adminEmail);
+
+  if (!adminExists) {
+    // Create admin user
+    const adminUser = {
+      id: 1, // First user
+      fullname: "Mission Commander",
+      name: "Mission Commander",
+      email: adminEmail,
+      password: "@mars1234",
+      role: "Commander",
+      registeredDate: new Date().toISOString(),
+    };
+
+    users.push(adminUser);
+    localStorage.setItem("registeredUsers", JSON.stringify(users));
+
+    // Also add to manageUsers
+    const adminManageUser = {
+      id: 1,
+      name: "Mission Commander",
+      email: adminEmail,
+      role: "Commander",
+    };
+
+    manageUsers.push(adminManageUser);
+    localStorage.setItem("manageUsers", JSON.stringify(manageUsers));
+
+    console.log("Default admin account created");
+  }
+}
+
+// ==================== PROFILE PAGE ====================
 function initializeProfilePage() {
   const profilePage = document.querySelector(".dashboard-main");
   if (!profilePage) return;
 
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const userEmail = localStorage.getItem("userEmail");
-
   const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
   const currentUser = users.find((user) => user.email === userEmail);
 
   if (!isLoggedIn || !currentUser) {
     showNotification("Please login first", "error");
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 2000);
+    setTimeout(() => (window.location.href = "login.html"), 2000);
     return;
   }
 
@@ -30,22 +72,18 @@ function initializeProfilePage() {
 }
 
 function updateProfileDisplay(user) {
-  // Update profile name and email
   const profileName = document.querySelector(".profile-name");
   const profileEmail = document.querySelector(".profile-email");
-
   if (profileName) profileName.textContent = user.fullname || "Astronaut Name";
   if (profileEmail)
     profileEmail.textContent = user.email || "email@marscolony.space";
 
-  // Update about text
   const aboutText = document.querySelector(".about-text");
   if (aboutText) {
     let roleText = getRoleDisplay(user.role);
     aboutText.innerHTML = `Hi!✨ I am ${user.fullname.split(" ")[0]}, a ${roleText} with the Mars Colony. ${user.departure ? `Expected departure: ${user.departure}.` : ""} Proud member of humanity's greatest adventure!`;
   }
 
-  // Update mission ID
   const missionId = document.getElementById("mission-id");
   if (missionId) {
     const id =
@@ -56,24 +94,18 @@ function updateProfileDisplay(user) {
     missionId.textContent = id;
   }
 
-  // Update role and departure
   const userRole = document.getElementById("user-role");
   const userDeparture = document.getElementById("user-departure");
-
   if (userRole)
     userRole.textContent = getRoleDisplay(user.role) || "Not specified";
   if (userDeparture)
     userDeparture.textContent =
       getDepartureDisplay(user.departure) || "Not specified";
 
-  // Update date
   const currentDate = document.getElementById("current-date");
-  if (currentDate) {
-    const today = new Date();
+  if (currentDate)
     currentDate.textContent = `Sol ${Math.floor(Math.random() * 1000 + 1000)}`;
-  }
 
-  // Add registration date
   if (user.registeredDate && !document.getElementById("reg-section")) {
     const profileSections = document.querySelector(".profile-sections");
     if (profileSections) {
@@ -81,11 +113,11 @@ function updateProfileDisplay(user) {
       regSection.className = "info-section";
       regSection.id = "reg-section";
       regSection.innerHTML = `
-                <h3><span>📅</span> Colony Registration</h3>
-                <div class="info-content">
-                    <p>Joined the Mars Colony initiative on <strong>${new Date(user.registeredDate).toLocaleDateString()}</strong></p>
-                </div>
-            `;
+        <h3><span>📅</span> Colony Registration</h3>
+        <div class="info-content">
+          <p>Joined the Mars Colony initiative on <strong>${new Date(user.registeredDate).toLocaleDateString()}</strong></p>
+        </div>
+      `;
       profileSections.appendChild(regSection);
     }
   }
@@ -96,114 +128,107 @@ function initializeSettingsPage() {
   const settingsPage = document.querySelector(".settings-form");
   if (!settingsPage) return;
 
-  // Check if user is logged in
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const userEmail = localStorage.getItem("userEmail");
-
   const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
   const currentUser = users.find((user) => user.email === userEmail);
 
   if (!isLoggedIn || !currentUser) {
     showNotification("Please login first", "error");
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 2000);
+    setTimeout(() => (window.location.href = "login.html"), 2000);
     return;
   }
 
-  // Load user data into settings form
   loadUserSettings(currentUser);
-
-  // Add event listeners for settings buttons
   setupSettingsListeners(currentUser, users);
 }
 
 function loadUserSettings(user) {
-  // Load email
   const emailField = document.getElementById("change-email");
   if (emailField) emailField.value = user.email;
 
-  // Load address (if saved)
   const addressField = document.getElementById("change-address");
   const savedAddress = localStorage.getItem("userAddress_" + user.email);
   if (addressField && savedAddress) addressField.value = savedAddress;
 
-  // Load theme preference
   const savedTheme = localStorage.getItem("userTheme_" + user.email);
   if (savedTheme) {
     const themeRadio = document.getElementById("theme-" + savedTheme);
     if (themeRadio) themeRadio.checked = true;
+  } else {
+    // Default to mars theme
+    const marsTheme = document.getElementById("theme-mars");
+    if (marsTheme) marsTheme.checked = true;
   }
 
-  // Load notification preferences
   const notifications = document.getElementById("notifications");
   const locationSharing = document.getElementById("location-sharing");
   const dataSync = document.getElementById("data-sync");
 
-  if (notifications) {
+  if (notifications)
     notifications.checked =
       localStorage.getItem("notifications_" + user.email) !== "false";
-  }
-  if (locationSharing) {
+  if (locationSharing)
     locationSharing.checked =
       localStorage.getItem("location_" + user.email) !== "false";
-  }
-  if (dataSync) {
+  if (dataSync)
     dataSync.checked = localStorage.getItem("sync_" + user.email) === "true";
-  }
 }
 
 function setupSettingsListeners(currentUser, users) {
   // Save All Changes button
-  const saveBtn = document.querySelector(".save-btn");
-  if (saveBtn) {
-    saveBtn.addEventListener("click", function (e) {
+  const saveBtn =
+    document.getElementById("save-settings") ||
+    document.querySelector(".save-btn");
+  if (saveBtn)
+    saveBtn.addEventListener("click", (e) => {
       e.preventDefault();
       saveSettings(currentUser, users);
     });
-  }
 
   // Password change validation
   const newPassword = document.getElementById("new-password");
   const confirmPassword = document.getElementById("confirm-password");
-
   if (newPassword && confirmPassword) {
     [newPassword, confirmPassword].forEach((field) => {
-      field.addEventListener("input", function () {
-        validatePasswordMatch(newPassword, confirmPassword);
-      });
+      field.addEventListener("input", () =>
+        validatePasswordMatch(newPassword, confirmPassword),
+      );
     });
   }
 
   // Delete account button
-  const deleteBtn = document.querySelector(".delete-btn");
-  if (deleteBtn) {
-    deleteBtn.addEventListener("click", function (e) {
+  const deleteBtn =
+    document.getElementById("delete-btn") ||
+    document.querySelector(".delete-btn");
+  if (deleteBtn)
+    deleteBtn.addEventListener("click", (e) => {
       e.preventDefault();
       deleteAccount(currentUser);
     });
-  }
 
   // Mission transfer button
-  const transferBtn = document.querySelector(".danger-btn:not(.delete-btn)");
-  if (transferBtn) {
-    transferBtn.addEventListener("click", function (e) {
+  const transferBtn =
+    document.getElementById("transfer-btn") ||
+    document.querySelector(".danger-btn:not(.delete-btn)");
+  if (transferBtn)
+    transferBtn.addEventListener("click", (e) => {
       e.preventDefault();
       showNotification(
         "Mission transfer request sent to Mission Control",
         "success",
       );
     });
-  }
 
   // Back to profile link
-  const backBtn = document.querySelector(".back-btn");
-  if (backBtn) {
-    backBtn.addEventListener("click", function (e) {
+  const backBtn =
+    document.getElementById("back-to-profile") ||
+    document.querySelector(".back-btn");
+  if (backBtn)
+    backBtn.addEventListener("click", (e) => {
       e.preventDefault();
       window.location.href = "profile.html";
     });
-  }
 }
 
 function saveSettings(currentUser, users) {
@@ -212,7 +237,6 @@ function saveSettings(currentUser, users) {
   const currentPassword = document.getElementById("current-password");
   const newPassword = document.getElementById("new-password");
   const confirmPassword = document.getElementById("confirm-password");
-
   let isValid = true;
 
   // Validate email if changed
@@ -221,7 +245,6 @@ function saveSettings(currentUser, users) {
       showError(emailField, "Please enter a valid email");
       isValid = false;
     } else {
-      // Check if email already exists
       const emailExists = users.some(
         (u) => u.email === emailField.value && u.email !== currentUser.email,
       );
@@ -238,7 +261,6 @@ function saveSettings(currentUser, users) {
 
   // Validate password change if fields are filled
   if (newPassword && newPassword.value) {
-    // Check current password
     if (!currentPassword || currentPassword.value !== currentUser.password) {
       showError(currentPassword, "Current password is incorrect");
       isValid = false;
@@ -304,6 +326,21 @@ function saveSettings(currentUser, users) {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
     }
 
+    // Also update in manageUsers if exists
+    let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
+    const manageUserIndex = manageUsers.findIndex(
+      (u) => u.email === currentUser.email,
+    );
+    if (manageUserIndex !== -1) {
+      manageUsers[manageUserIndex] = {
+        id: currentUser.id,
+        name: currentUser.name || currentUser.fullname,
+        email: currentUser.email,
+        role: currentUser.role,
+      };
+      localStorage.setItem("manageUsers", JSON.stringify(manageUsers));
+    }
+
     showNotification("Settings saved successfully!", "success");
 
     // Clear password fields
@@ -313,19 +350,26 @@ function saveSettings(currentUser, users) {
   }
 }
 
-/**
- * Deletes user account
- */
+// ==================== DELETE ACCOUNT ====================
 function deleteAccount(currentUser) {
   if (
     confirm(
       "⚠️ WARNING: This will permanently delete your colony account. Are you sure?",
     )
   ) {
+    // Get current users
     const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
-    const updatedUsers = users.filter((u) => u.email !== currentUser.email);
+    const manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
 
+    // Filter out the current user from registeredUsers
+    const updatedUsers = users.filter((u) => u.email !== currentUser.email);
     localStorage.setItem("registeredUsers", JSON.stringify(updatedUsers));
+
+    // Also filter out from manageUsers (admin page)
+    const updatedManageUsers = manageUsers.filter(
+      (u) => u.email !== currentUser.email,
+    );
+    localStorage.setItem("manageUsers", JSON.stringify(updatedManageUsers));
 
     // Clear session
     localStorage.removeItem("isLoggedIn");
@@ -335,74 +379,30 @@ function deleteAccount(currentUser) {
 
     showNotification("Account deleted. We're sorry to see you go.", "success");
 
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 2000);
+    // Redirect to home page
+    setTimeout(() => (window.location.href = "index.html"), 2000);
   }
 }
 
-/**
- * Validates password match
- */
-function validatePasswordMatch(newPass, confirmPass) {
-  if (confirmPass.value && newPass.value !== confirmPass.value) {
-    showError(confirmPass, "Passwords do not match");
-    return false;
-  } else if (confirmPass.value) {
-    clearError(confirmPass);
-    return true;
-  }
-  return true;
-}
-
-// ==================== HELPER FUNCTIONS ====================
-
-function getRoleDisplay(role) {
-  const roles = {
-    scientist: "Research Scientist",
-    engineer: "Colony Engineer",
-    agriculture: "Agricultural Specialist",
-    medical: "Medical Officer",
-    pilot: "Transport Pilot",
-    other: "Colony Specialist",
-  };
-  return roles[role] || role || "Colony Specialist";
-}
-
-function getDepartureDisplay(departure) {
-  const departures = {
-    2028: "Mars Mission 2028",
-    2030: "Mars Mission 2030",
-    2032: "Mars Mission 2032",
-    2035: "Mars Mission 2035",
-    undecided: "Undecided",
-  };
-  return departures[departure] || departure;
-}
-
-// ==================== LOGOUT FUNCTION ====================
+// ==================== LOGOUT ====================
 function initializeLogout() {
-  const logoutLink = document.querySelector('a[href="login.html"]');
+  const logoutLink =
+    document.getElementById("logout-btn") ||
+    document.querySelector('a[href="login.html"]');
 
-  if (logoutLink && logoutLink.textContent.includes("Logout")) {
-    logoutLink.addEventListener("click", function (e) {
+  if (logoutLink) {
+    logoutLink.addEventListener("click", (e) => {
       e.preventDefault();
-
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userFullName");
       localStorage.removeItem("currentUser");
-
       showNotification("Logged out successfully!", "success");
-
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1500);
+      setTimeout(() => (window.location.href = "index.html"), 1500);
     });
   }
 }
-
-// ==================== SIGNUP FORM VALIDATION ====================
+// ==================== SIGNUP FORM ====================
 function initializeSignupForm() {
   const signupForm = document.querySelector(".signup-form");
   if (!signupForm) return;
@@ -416,10 +416,9 @@ function initializeSignupForm() {
     const confirmPassword = document.getElementById("signup-confirm-password");
     const missionRole = document.getElementById("mission-role");
     const departureDate = document.getElementById("departure-date");
-
     let isValid = true;
 
-    // Full name validation
+    // Validation
     if (!fullname.value) {
       showError(fullname, "Full name is required");
       isValid = false;
@@ -436,7 +435,6 @@ function initializeSignupForm() {
       clearError(fullname);
     }
 
-    // Email validation
     if (!email.value) {
       showError(email, "Email is required");
       isValid = false;
@@ -447,7 +445,6 @@ function initializeSignupForm() {
       clearError(email);
     }
 
-    // Password validation
     if (!password.value) {
       showError(password, "Password is required");
       isValid = false;
@@ -464,7 +461,6 @@ function initializeSignupForm() {
       clearError(password);
     }
 
-    // Confirm password validation
     if (!confirmPassword.value) {
       showError(confirmPassword, "Please confirm your password");
       isValid = false;
@@ -475,7 +471,6 @@ function initializeSignupForm() {
       clearError(confirmPassword);
     }
 
-    // If valid, save user data and go to profile
     if (isValid) {
       const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
       const existingUser = users.find(
@@ -487,17 +482,61 @@ function initializeSignupForm() {
         return;
       }
 
+      // Get current manageUsers
+      let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
+
+      // Calculate next ID based on existing users
+      let nextId;
+      if (manageUsers.length === 0) {
+        nextId = 1; // Start with 1 if empty
+      } else {
+        // Get the highest ID and add 1
+        const maxId = Math.max(...manageUsers.map((u) => u.id));
+        nextId = maxId + 1;
+      }
+
+      // Also check registeredUsers for any users not in manageUsers
+      if (users.length > 0) {
+        const maxRegisteredId = Math.max(...users.map((u) => u.id || 0));
+        if (maxRegisteredId >= nextId) {
+          nextId = maxRegisteredId + 1;
+        }
+      }
+
+      let role = "Other";
+      if (missionRole) {
+        const roleMap = {
+          scientist: "Scientist",
+          engineer: "Engineer",
+          medical: "Medical",
+          pilot: "Pilot",
+          agriculture: "Scientist",
+          other: "Other",
+        };
+        role = roleMap[missionRole.value] || "Other";
+      }
+
       const userData = {
+        id: nextId, // This will be 1, 2, 3, etc.
         fullname: fullname.value.trim(),
+        name: fullname.value.trim(),
         email: email.value.toLowerCase(),
         password: password.value,
-        role: missionRole ? missionRole.value : "",
+        role: role,
         departure: departureDate ? departureDate.value : "",
         registeredDate: new Date().toISOString(),
       };
 
       users.push(userData);
       localStorage.setItem("registeredUsers", JSON.stringify(users));
+
+      // Save to manageUsers
+      saveToManageUsers({
+        id: nextId,
+        name: fullname.value.trim(),
+        email: email.value.toLowerCase(),
+        role: role,
+      });
 
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("userEmail", email.value.toLowerCase());
@@ -508,18 +547,14 @@ function initializeSignupForm() {
         "Registration successful! Welcome to the colony!",
         "success",
       );
-
-      setTimeout(() => {
-        window.location.href = "profile.html";
-      }, 1500);
+      setTimeout(() => (window.location.href = "profile.html"), 1500);
     }
   });
 }
 
-// ==================== LOGIN FORM VALIDATION ====================
+// ==================== LOGIN FORM ====================
 function initializeLoginForm() {
   const loginForm = document.querySelector(".login-form");
-
   if (!loginForm) return;
 
   loginForm.addEventListener("submit", function (e) {
@@ -527,7 +562,6 @@ function initializeLoginForm() {
 
     const email = document.getElementById("login-email");
     const password = document.getElementById("login-password");
-
     let isValid = true;
 
     if (!email.value) {
@@ -556,22 +590,26 @@ function initializeLoginForm() {
       if (user) {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userEmail", email.value);
-        localStorage.setItem("userFullName", user.fullname);
+        localStorage.setItem("userFullName", user.fullname || user.name);
         localStorage.setItem("currentUser", JSON.stringify(user));
 
         showNotification(
           "Login successful! Welcome back, " +
-            user.fullname.split(" ")[0] +
+            (user.fullname || user.name).split(" ")[0] +
             "!",
           "success",
         );
 
+        // ✅ CHECK IF USER IS ADMIN AND REDIRECT APPROPRIATELY
         setTimeout(() => {
-          window.location.href = "profile.html";
+          if (email.value.toLowerCase() === "marsinitiative@admin.com") {
+            window.location.href = "admin.html"; // Admin goes to admin dashboard
+          } else {
+            window.location.href = "profile.html"; // Regular users go to profile
+          }
         }, 1500);
       } else {
         const userExists = checkIfUserExists(email.value);
-
         if (userExists) {
           showError(password, "Incorrect password. Please try again.");
         } else {
@@ -582,8 +620,166 @@ function initializeLoginForm() {
   });
 }
 
-// ==================== LOCAL STORAGE FUNCTIONS ====================
+// ==================== MANAGE USERS ====================
+// Start with an empty array - only users you add or sign up will appear
+let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
 
+let nextManageId =
+  manageUsers.length > 0 ? Math.max(...manageUsers.map((u) => u.id)) + 1 : 1;
+
+// NEW FUNCTION: Update nextManageId after any changes
+function updateNextManageId() {
+  nextManageId =
+    manageUsers.length > 0 ? Math.max(...manageUsers.map((u) => u.id)) + 1 : 1;
+}
+
+function initializeManageUsers() {
+  if (!document.getElementById("tableBody")) return;
+  refreshManageTable();
+}
+
+function showForm() {
+  document.getElementById("userForm").style.display = "block";
+}
+
+function hideForm() {
+  document.getElementById("userForm").style.display = "none";
+  document.getElementById("userName").value = "";
+  document.getElementById("userEmail").value = "";
+  document.getElementById("userPassword").value = "";
+}
+
+// ✅ UPDATED FUNCTION WITH EMAIL VALIDATION
+function addUser() {
+  let name = document.getElementById("userName").value;
+  let email = document.getElementById("userEmail").value;
+  let password = document.getElementById("userPassword").value;
+  let role = document.getElementById("userRole").value;
+
+  if (!name || !email || !password) {
+    alert("Please fill in all fields");
+    return;
+  }
+
+  if (!email.includes("@")) {
+    alert("Please enter a valid email");
+    return;
+  }
+
+  if (password.length < 6) {
+    alert("Password must be at least 6 characters");
+    return;
+  }
+
+  // ✅ CHECK FOR EXISTING EMAIL IN manageUsers
+  const emailExists = manageUsers.some(
+    (user) => user.email.toLowerCase() === email.toLowerCase(),
+  );
+
+  if (emailExists) {
+    alert("This email is already registered. Please use a different email.");
+    return;
+  }
+
+  // ✅ ALSO CHECK IN registeredUsers
+  let registeredUsers =
+    JSON.parse(localStorage.getItem("registeredUsers")) || [];
+  const registeredEmailExists = registeredUsers.some(
+    (user) => user.email.toLowerCase() === email.toLowerCase(),
+  );
+
+  if (registeredEmailExists) {
+    alert("This email is already registered. Please use a different email.");
+    return;
+  }
+
+  const newUser = {
+    id: nextManageId++,
+    name: name,
+    email: email,
+    role: role,
+  };
+
+  manageUsers.push(newUser);
+  localStorage.setItem("manageUsers", JSON.stringify(manageUsers));
+  saveToRegisteredUsers(newUser, password);
+  refreshManageTable();
+  hideForm();
+  updateNextManageId();
+  alert(
+    "User added successfully! They can now login with the password you set.",
+  );
+}
+
+function saveToRegisteredUsers(user, password) {
+  let registeredUsers =
+    JSON.parse(localStorage.getItem("registeredUsers")) || [];
+  const exists = registeredUsers.some((u) => u.email === user.email);
+
+  if (!exists) {
+    registeredUsers.push({
+      id: user.id,
+      fullname: user.name,
+      name: user.name,
+      email: user.email,
+      password: password,
+      role: user.role,
+      registeredDate: new Date().toISOString(),
+    });
+    localStorage.setItem("registeredUsers", JSON.stringify(registeredUsers));
+  }
+}
+
+function deleteUser(id) {
+  if (confirm("Delete this user?")) {
+    const userToDelete = manageUsers.find((u) => u.id === id);
+    manageUsers = manageUsers.filter((user) => user.id !== id);
+    localStorage.setItem("manageUsers", JSON.stringify(manageUsers));
+    deleteFromRegisteredUsers(userToDelete.email);
+    refreshManageTable();
+    updateNextManageId();
+  }
+}
+
+function deleteFromRegisteredUsers(email) {
+  let registeredUsers =
+    JSON.parse(localStorage.getItem("registeredUsers")) || [];
+  registeredUsers = registeredUsers.filter((u) => u.email !== email);
+  localStorage.setItem("registeredUsers", JSON.stringify(registeredUsers));
+}
+
+function refreshManageTable() {
+  let tbody = document.getElementById("tableBody");
+  if (!tbody) return;
+
+  let html = "";
+  for (let user of manageUsers) {
+    let roleClass = user.role.toLowerCase();
+    html += `<tr>
+      <td>${user.id}</td>
+      <td>${user.name}</td>
+      <td>${user.email}</td>
+      <td><span class="role ${roleClass}">${user.role}</span></td>
+      <td><button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button></td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function saveToManageUsers(user) {
+  let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
+
+  // Check if user already exists
+  const exists = manageUsers.some((u) => u.email === user.email);
+
+  if (!exists) {
+    manageUsers.push(user);
+    localStorage.setItem("manageUsers", JSON.stringify(manageUsers));
+    updateNextManageId();
+  }
+}
+
+// ==================== LOCAL STORAGE HELPERS ====================
 function checkUserCredentials(email, password) {
   const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
   return (
@@ -600,16 +796,13 @@ function checkIfUserExists(email) {
   return users.some((user) => user.email.toLowerCase() === email.toLowerCase());
 }
 
-// ==================== VALIDATION HELPER FUNCTIONS ====================
-
+// ==================== VALIDATION HELPERS ====================
 function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(String(email).toLowerCase());
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).toLowerCase());
 }
 
 function validateFullName(name) {
-  const re = /^[a-zA-Z\s]+$/;
-  return re.test(name.trim());
+  return /^[a-zA-Z\s]+$/.test(name.trim());
 }
 
 function validatePasswordStrength(password) {
@@ -619,78 +812,77 @@ function validatePasswordStrength(password) {
   return hasLetter && hasNumber && hasSpecial;
 }
 
-// ==================== UI HELPER FUNCTIONS ====================
+function validatePasswordMatch(newPass, confirmPass) {
+  if (confirmPass.value && newPass.value !== confirmPass.value) {
+    showError(confirmPass, "Passwords do not match");
+    return false;
+  } else if (confirmPass.value) {
+    clearError(confirmPass);
+    return true;
+  }
+  return true;
+}
 
+// ==================== DISPLAY HELPERS ====================
+function getRoleDisplay(role) {
+  const roles = {
+    scientist: "Research Scientist",
+    engineer: "Colony Engineer",
+    agriculture: "Agricultural Specialist",
+    medical: "Medical Officer",
+    pilot: "Transport Pilot",
+    other: "Colony Specialist",
+  };
+  return roles[role] || role || "Colony Specialist";
+}
+
+function getDepartureDisplay(departure) {
+  const departures = {
+    2028: "Mars Mission 2028",
+    2030: "Mars Mission 2030",
+    2032: "Mars Mission 2032",
+    2035: "Mars Mission 2035",
+    undecided: "Undecided",
+  };
+  return departures[departure] || departure;
+}
+
+// ==================== UI HELPERS ====================
 function showError(input, message) {
   clearError(input);
-
   const errorDiv = document.createElement("div");
   errorDiv.className = "error-message";
-  errorDiv.style.color = "#ff4444";
-  errorDiv.style.fontSize = "0.85em";
-  errorDiv.style.marginTop = "5px";
-  errorDiv.style.marginBottom = "10px";
-  errorDiv.style.fontFamily = "Arial, sans-serif";
-  errorDiv.style.animation = "fadeIn 0.3s ease";
+  errorDiv.style.cssText =
+    "color:#ff4444;font-size:0.85em;margin-top:5px;margin-bottom:10px;font-family:Arial,sans-serif;animation:fadeIn 0.3s ease;";
   errorDiv.textContent = message;
-
-  input.style.borderColor = "#ff4444";
-  input.style.borderWidth = "2px";
-  input.style.borderStyle = "solid";
-
-  if (input.nextSibling) {
-    input.parentNode.insertBefore(errorDiv, input.nextSibling);
-  } else {
-    input.parentNode.appendChild(errorDiv);
-  }
+  input.style.border = "2px solid #ff4444";
+  input.parentNode.insertBefore(errorDiv, input.nextSibling);
 }
 
 function clearError(input) {
-  input.style.borderColor = "";
-  input.style.borderWidth = "";
-  input.style.borderStyle = "";
-
-  const parent = input.parentNode;
-  const errorDiv = parent.querySelector(".error-message");
-  if (errorDiv) {
-    errorDiv.remove();
-  }
+  input.style.border = "";
+  const errorDiv = input.parentNode.querySelector(".error-message");
+  if (errorDiv) errorDiv.remove();
 }
 
 function showNotification(message, type = "info") {
   const existingNotification = document.querySelector(".auth-notification");
-  if (existingNotification) {
-    existingNotification.remove();
-  }
+  if (existingNotification) existingNotification.remove();
 
   const notification = document.createElement("div");
   notification.className = "auth-notification";
-  notification.style.position = "fixed";
-  notification.style.top = "20px";
-  notification.style.right = "20px";
-  notification.style.padding = "15px 25px";
-  notification.style.borderRadius = "5px";
-  notification.style.color = "white";
-  notification.style.fontWeight = "bold";
-  notification.style.zIndex = "9999";
-  notification.style.animation = "slideIn 0.3s ease";
-  notification.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
-
-  if (type === "success") {
-    notification.style.backgroundColor = "#4CAF50";
-  } else {
-    notification.style.backgroundColor = "#f44336";
-  }
-
+  notification.style.cssText = `
+    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+    border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
+    animation: slideIn 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: ${type === "success" ? "#4CAF50" : "#f44336"};
+  `;
   notification.textContent = message;
-
   document.body.appendChild(notification);
 
   setTimeout(() => {
     notification.style.animation = "slideOut 0.3s ease";
-    setTimeout(() => {
-      notification.remove();
-    }, 300);
+    setTimeout(() => notification.remove(), 300);
   }, 3000);
 }
 
@@ -698,38 +890,9 @@ function showNotification(message, type = "info") {
 (function addAnimationStyles() {
   const style = document.createElement("style");
   style.textContent = `
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    `;
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  `;
   document.head.appendChild(style);
 })();
