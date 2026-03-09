@@ -594,7 +594,7 @@ function initializeLoginForm() {
         localStorage.setItem("currentUser", JSON.stringify(user));
 
         showNotification(
-          "Login successful! Welcome back, " +
+          "Login successful! Welcome, " +
             (user.fullname || user.name).split(" ")[0] +
             "!",
           "success",
