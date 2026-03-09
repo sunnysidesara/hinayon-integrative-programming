@@ -385,10 +385,10 @@ function deleteAccount(currentUser) {
 }
 
 // ==================== LOGOUT ====================
+// ==================== LOGOUT ====================
 function initializeLogout() {
-  const logoutLink =
-    document.getElementById("logout-btn") ||
-    document.querySelector('a[href="login.html"]');
+  // Only look for links with the 'logout-link' class
+  const logoutLink = document.querySelector(".logout-link");
 
   if (logoutLink) {
     logoutLink.addEventListener("click", (e) => {
