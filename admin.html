@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mars Initiative - Space Agency Finder</title>
+    <title>Admin Dashboard | Mars Colonization Initiative</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="admin.css" />
   </head>
   <body>
     <!-- Simple Admin Dashboard -->
@@ -33,34 +34,151 @@
           </p>
         </div>
       </div>
-    </nav>
 
-    <div class="dashboard-bg-effect">
-      <div class="dashboard-dust"></div>
-      <div class="dashboard-scan"></div>
-    </div>
-
-    <main class="dashboard-main">
-      <div class="api-header">
-        <h1>🌍 SPACE AGENCY FINDER</h1>
-        <p>Search any country to check for space programs</p>
-      </div>
-
-      <div class="api-container">
-        <div class="search-box">
-          <input
-            type="text"
-            id="countryInput"
-            placeholder="Enter country (e.g., USA, Japan)"
-          />
-          <button onclick="searchCountry()">SEARCH</button>
+      <!-- Main Content -->
+      <div class="admin-content">
+        <!-- Header -->
+        <div class="admin-header">
+          <h1>Admin Dashboard</h1>
+          <div>
+            <button class="admin-btn">🔔 Alerts (3)</button>
+            <button class="admin-btn">⚙️ Settings</button>
+          </div>
         </div>
 
-        <div id="result"></div>
-        <div id="marsFact" class="mars-fact"></div>
-      </div>
-    </main>
+        <!-- Welcome Message -->
+        <div class="welcome-box">
+          <h2>Welcome, Admin!</h2>
+          <p>Use the menu to manage system data.</p>
+        </div>
 
+        <!-- Stats in Simple Cards -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-icon">👥</div>
+            <div>
+              <h3>1,247</h3>
+              <p>Total Users</p>
+              <small>+12 this week</small>
+            </div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-icon">🚀</div>
+            <div>
+              <h3>8</h3>
+              <p>Active Missions</p>
+              <small>4 in preparation</small>
+            </div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-icon">🏛️</div>
+            <div>
+              <h3>342</h3>
+              <p>Colony Residents</p>
+              <small>+18 this month</small>
+            </div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-icon">⚠️</div>
+            <div>
+              <h3>3</h3>
+              <p>System Alerts</p>
+              <small>2 need attention</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Lists -->
+        <div class="lists-row">
+          <!-- Recent Users -->
+          <div class="list-card">
+            <div class="list-header">
+              <h3>👥 Recent Users</h3>
+              <a href="manage-users.html">View All →</a>
+            </div>
+            <div class="list-item">
+              <span>Sarah Chen</span>
+              <span class="badge scientist">Scientist</span>
+              <span class="badge active">Active</span>
+            </div>
+            <div class="list-item">
+              <span>Marcus Webb</span>
+              <span class="badge engineer">Engineer</span>
+              <span class="badge active">Active</span>
+            </div>
+            <div class="list-item">
+              <span>Elena Rodriguez</span>
+              <span class="badge medical">Medical</span>
+              <span class="badge away">Away</span>
+            </div>
+            <button
+              class="list-btn"
+              onclick="window.location.href = 'manage-users.html'"
+            >
+              Manage Users
+            </button>
+          </div>
+
+          <!-- Resources -->
+          <div class="list-card">
+            <div class="list-header">
+              <h3>⚡ Resources</h3>
+              <a href="#">View Details →</a>
+            </div>
+            <div class="list-item">
+              <span>Oxygen</span>
+              <span class="resource high">94%</span>
+            </div>
+            <div class="list-item">
+              <span>Water</span>
+              <span class="resource medium">67%</span>
+            </div>
+            <div class="list-item">
+              <span>Power</span>
+              <span class="resource high">87%</span>
+            </div>
+            <div class="list-item">
+              <span>Food</span>
+              <span class="resource low">42%</span>
+            </div>
+            <button class="list-btn">Manage Resources</button>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="list-card">
+            <div class="list-header">
+              <h3>📋 Recent Activity</h3>
+            </div>
+            <div class="list-item">
+              <span>14:30</span>
+              <span>Profile updated</span>
+            </div>
+            <div class="list-item">
+              <span>14:15</span>
+              <span>Mission parameters</span>
+            </div>
+            <div class="list-item">
+              <span>13:45</span>
+              <span>Resource adjusted</span>
+            </div>
+            <div class="list-item">
+              <span>13:20</span>
+              <span>Security patch</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simple Footer -->
+    <footer class="admin-footer">
+      <p>© 2026 Mars Colonization Initiative | Hinayon, Sarah Mae</p>
+    </footer>
+
+    <!-- Link to script.js -->
     <script src="script.js"></script>
   </body>
 </html>
