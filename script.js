@@ -886,6 +886,64 @@ function showNotification(message, type = "info") {
   }, 3000);
 }
 
+const spaceAgencies = {
+  USA: "NASA, SpaceX",
+  RUS: "Roscosmos",
+  CHN: "CNSA",
+  JPN: "JAXA",
+  IND: "ISRO",
+  FRA: "CNES",
+  GER: "DLR",
+  CAN: "CSA",
+  UAE: "UAESA",
+};
+
+const marsFacts = [
+  "🌍 Over 70 countries have space programs!",
+  "🚀 The Mars Initiative has supporters in 40+ countries",
+  "🔴 A Mars mission will need global cooperation",
+];
+
+async function searchCountry() {
+  const country = document.getElementById("countryInput").value;
+
+  // API CALL - Check F12 Network tab to see this response
+  const response = await fetch(
+    `https://restcountries.com/v3.1/name/${country}`,
+  );
+  const data = await response.json();
+
+  // Display result
+  const countryData = data[0];
+  const hasSpace = spaceAgencies[countryData.cca3];
+
+  document.getElementById("result").innerHTML = `
+        <div class="result-card">
+            <div class="country-header">
+                <img src="${countryData.flags.png}">
+                <div class="country-name">${countryData.name.common}</div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">CAPITAL</div>
+                    <div class="info-value">${countryData.capital[0]}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">POPULATION</div>
+                    <div class="info-value">${countryData.population.toLocaleString()}</div>
+                </div>
+            </div>
+            <div class="space-status ${hasSpace ? "has-space" : "no-space"}">
+                ${hasSpace ? `✅ HAS SPACE AGENCY: ${hasSpace}` : "❌ No space agency yet"}
+            </div>
+        </div>
+    `;
+
+  // Random fact
+  document.getElementById("marsFact").innerHTML =
+    marsFacts[Math.floor(Math.random() * marsFacts.length)];
+}
+
 // ==================== ANIMATION STYLES ====================
 (function addAnimationStyles() {
   const style = document.createElement("style");
