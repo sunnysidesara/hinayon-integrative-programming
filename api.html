@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Mars Initiative - Space Agency Finder</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="dashboard-page">
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+      <div class="dashboard-nav-container">
+        <a href="#" class="dashboard-nav-logo">🚀 MARS INITIATIVE</a>
+        <ul class="dashboard-nav-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#" class="active">Space Agency Finder</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Background Effects -->
+    <div class="dashboard-bg-effect">
+      <div class="dashboard-dust"></div>
+      <div class="dashboard-scan"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <div class="api-header">
+        <h1>🌍 SPACE AGENCY FINDER</h1>
+        <p>Search any country to check if they have a space program</p>
+      </div>
+
+      <div class="api-container">
+        <div class="search-box">
+          <input
+            type="text"
+            id="countryInput"
+            placeholder="Enter country (e.g., USA, Japan, Brazil)"
+            onkeypress="handleKeyPress(event)"
+          />
+          <button onclick="searchCountry()">🔍 SEARCH</button>
+        </div>
+
+        <div id="result"></div>
+        <div id="marsFact" class="mars-fact"></div>
+
+        <div class="note">
+          🌌 Uniting space-faring nations for the journey to Mars
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
