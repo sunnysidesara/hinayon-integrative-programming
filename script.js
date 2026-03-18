@@ -886,6 +886,9 @@ function showNotification(message, type = "info") {
   }, 3000);
 }
 
+// ==================== API SAVE FEATURE ====================
+
+// Space agencies data
 const spaceAgencies = {
   USA: "NASA, SpaceX",
   RUS: "Roscosmos",
@@ -896,61 +899,314 @@ const spaceAgencies = {
   GER: "DLR",
   CAN: "CSA",
   UAE: "UAESA",
+  ITA: "ASI",
+  ISR: "ISA",
+  KOR: "KARI",
+  UK: "UKSA",
 };
 
+// Mars facts
 const marsFacts = [
   "🌍 Over 70 countries have space programs!",
   "🚀 The Mars Initiative has supporters in 40+ countries",
   "🔴 A Mars mission will need global cooperation",
+  "🛸 The first Mars mission is planned for 2030",
+  "🌡️ Mars has an average temperature of -60°C",
+  "⏰ A day on Mars is 24 hours and 37 minutes",
+  "🏔️ Olympus Mons on Mars is 3x taller than Everest",
 ];
 
+// ==================== SEARCH FUNCTION ====================
 async function searchCountry() {
-  const country = document.getElementById("countryInput").value;
+  const countryInput = document.getElementById("countryInput");
+  const country = countryInput.value.trim();
 
-  // API CALL - Check F12 Network tab to see this response
-  const response = await fetch(
-    `https://restcountries.com/v3.1/name/${country}`,
-  );
-  const data = await response.json();
+  if (!country) {
+    showNotification("Please enter a country name", "error");
+    return;
+  }
 
-  // Display result
-  const countryData = data[0];
-  const hasSpace = spaceAgencies[countryData.cca3];
+  try {
+    // API CALL
+    const response = await fetch(
+      `https://restcountries.com/v3.1/name/${country}`,
+    );
 
-  document.getElementById("result").innerHTML = `
-        <div class="result-card">
-            <div class="country-header">
-                <img src="${countryData.flags.png}">
-                <div class="country-name">${countryData.name.common}</div>
-            </div>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">CAPITAL</div>
-                    <div class="info-value">${countryData.capital[0]}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">POPULATION</div>
-                    <div class="info-value">${countryData.population.toLocaleString()}</div>
-                </div>
-            </div>
-            <div class="space-status ${hasSpace ? "has-space" : "no-space"}">
-                ${hasSpace ? `✅ HAS SPACE AGENCY: ${hasSpace}` : "❌ No space agency yet"}
-            </div>
+    if (!response.ok) {
+      throw new Error("Country not found");
+    }
+
+    const data = await response.json();
+
+    // Get country data
+    const countryData = data[0];
+    const countryCode = countryData.cca3;
+    const hasSpace = spaceAgencies[countryCode];
+
+    // Create unique ID for this search result
+    const searchId = countryCode + "-" + Date.now();
+
+    document.getElementById("result").innerHTML = `
+      <div class="result-card" id="result-${searchId}">
+        <div class="country-header">
+          <img src="${countryData.flags.png}" alt="${countryData.flags.alt || `Flag of ${countryData.name.common}`}">
+          <div class="country-name">${countryData.name.common}</div>
         </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">CAPITAL</div>
+            <div class="info-value">${countryData.capital ? countryData.capital[0] : "N/A"}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">REGION</div>
+            <div class="info-value">${countryData.region}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">POPULATION</div>
+            <div class="info-value">${countryData.population.toLocaleString()}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">SPACE AGENCY</div>
+            <div class="info-value">${hasSpace ? hasSpace : "None"}</div>
+          </div>
+        </div>
+        <div class="space-status ${hasSpace ? "has-space" : "no-space"}">
+          ${hasSpace ? `✅ HAS SPACE PROGRAM: ${hasSpace}` : "❌ No space program yet"}
+        </div>
+        <button onclick='saveCountry("${countryData.name.common}", "${countryData.capital ? countryData.capital[0] : "N/A"}", "${countryData.region}", "${countryData.population}", "${countryData.flags.png}", "${hasSpace ? hasSpace : "None"}")' class="save-btn">
+          💾 SAVE THIS COUNTRY
+        </button>
+      </div>
     `;
 
-  // Random fact
-  document.getElementById("marsFact").innerHTML =
-    marsFacts[Math.floor(Math.random() * marsFacts.length)];
+    // Random fact
+    document.getElementById("marsFact").innerHTML =
+      marsFacts[Math.floor(Math.random() * marsFacts.length)];
+  } catch (error) {
+    document.getElementById("result").innerHTML = `
+      <div class="error-card">
+        ❌ Country not found. Please check the spelling and try again.
+      </div>
+    `;
+  }
 }
 
-// ==================== ANIMATION STYLES ====================
+// ==================== SAVE FUNCTION ====================
+function saveCountry(name, capital, region, population, flag, spaceAgency) {
+  // Create country object
+  const countryData = {
+    id: Date.now(), // Unique ID using timestamp
+    name: name,
+    capital: capital,
+    region: region,
+    population: population,
+    flag: flag,
+    spaceAgency: spaceAgency,
+    dateSaved: new Date().toLocaleString(),
+  };
+
+  // Get existing saved items from localStorage
+  let savedItems = JSON.parse(localStorage.getItem("savedCountries")) || [];
+
+  // Check for duplicates (by country name)
+  const isDuplicate = savedItems.some(
+    (item) => item.name.toLowerCase() === name.toLowerCase(),
+  );
+
+  if (isDuplicate) {
+    showNotification(`${name} is already saved!`, "error");
+    return;
+  }
+
+  // Add new item
+  savedItems.push(countryData);
+
+  // Save back to localStorage
+  localStorage.setItem("savedCountries", JSON.stringify(savedItems));
+
+  // Show success message
+  showNotification(`${name} saved successfully! 🌟`, "success");
+}
+
+// ==================== DISPLAY SAVED ITEMS (for saveitems.html) ====================
+function displaySavedItems() {
+  const container = document.getElementById("saved-items-container");
+  const statsDiv = document.getElementById("saved-stats");
+  const savedItems = JSON.parse(localStorage.getItem("savedCountries")) || [];
+
+  if (!container) return;
+
+  if (savedItems.length === 0) {
+    // Empty state
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No saved items yet</h3>
+        <p>Search for countries and save space agencies to build your collection!</p>
+        <button onclick="window.location.href='api.html'" class="search-btn">
+          🔍 SEARCH COUNTRIES
+        </button>
+      </div>
+    `;
+    if (statsDiv) statsDiv.innerHTML = "";
+    return;
+  }
+
+  // Display saved items
+  let html = '<div class="saved-grid">';
+
+  savedItems.forEach((item, index) => {
+    html += `
+      <div class="saved-card">
+        <div class="saved-card-header">
+          <img src="${item.flag}" alt="Flag of ${item.name}" class="saved-flag">
+          <h3>${item.name}</h3>
+        </div>
+        <div class="saved-card-body">
+          <p><strong>Capital:</strong> ${item.capital}</p>
+          <p><strong>Region:</strong> ${item.region}</p>
+          <p><strong>Population:</strong> ${Number(item.population).toLocaleString()}</p>
+          <p><strong>Space Agency:</strong></p>
+          <p class="agency-name">${item.spaceAgency}</p>
+          <p class="saved-date">Saved: ${item.dateSaved}</p>
+        </div>
+        <div class="saved-card-actions">
+          <button onclick="removeSavedItem(${index})" class="remove-btn">
+            ❌ REMOVE
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  html += "</div>";
+  container.innerHTML = html;
+
+  // Update stats
+  if (statsDiv) {
+    const countriesWithAgency = savedItems.filter(
+      (item) => item.spaceAgency !== "None",
+    ).length;
+    statsDiv.innerHTML = `
+      <p>Total: ${savedItems.length} saved | 
+      With Space Agency: ${countriesWithAgency} | 
+      Without: ${savedItems.length - countriesWithAgency}</p>
+    `;
+  }
+}
+
+// ==================== SCROLL SAVED ITEMS ====================
+function scrollSavedItems(direction) {
+  const container = document.querySelector(".saved-items-grid");
+  const cardWidth = 410; // Card width (380) + gap (30)
+
+  if (direction === "left") {
+    container.scrollBy({ left: -cardWidth, behavior: "smooth" });
+  } else {
+    container.scrollBy({ left: cardWidth, behavior: "smooth" });
+  }
+}
+// ==================== REMOVE SAVED ITEM ====================
+function removeSavedItem(index) {
+  let savedItems = JSON.parse(localStorage.getItem("savedCountries")) || [];
+
+  if (index >= 0 && index < savedItems.length) {
+    const removedItem = savedItems[index].name;
+    savedItems.splice(index, 1);
+    localStorage.setItem("savedCountries", JSON.stringify(savedItems));
+    displaySavedItems();
+    showNotification(`${removedItem} removed from saved items`, "info");
+  }
+}
+
+// ==================== CLEAR ALL SAVED ITEMS ====================
+function clearAllSaved() {
+  if (
+    confirm(
+      "Are you sure you want to clear all saved items? This cannot be undone.",
+    )
+  ) {
+    localStorage.removeItem("savedCountries");
+    displaySavedItems();
+    showNotification("All saved items cleared", "info");
+  }
+}
+
+// ==================== HANDLE ENTER KEY ====================
+function handleKeyPress(event) {
+  if (event.key === "Enter") {
+    searchCountry();
+  }
+}
+
+// ==================== NOTIFICATION FUNCTION ====================
+function showNotification(message, type = "info") {
+  // Remove existing notification
+  const existingNotification = document.querySelector(".api-notification");
+  if (existingNotification) existingNotification.remove();
+
+  // Create notification
+  const notification = document.createElement("div");
+  notification.className = "api-notification";
+  notification.style.cssText = `
+    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+    border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
+    animation: slideIn 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: ${type === "success" ? "#4CAF50" : type === "error" ? "#f44336" : "#2196F3"};
+  `;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+
+  // Remove after 3 seconds
+  setTimeout(() => {
+    notification.style.animation = "slideOut 0.3s ease";
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+// Add animation styles
 (function addAnimationStyles() {
   const style = document.createElement("style");
   style.textContent = `
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { 
+      from { transform: translateX(100%); opacity: 0; } 
+      to { transform: translateX(0); opacity: 1; } 
+    }
+    @keyframes slideOut { 
+      from { transform: translateX(0); opacity: 1; } 
+      to { transform: translateX(100%); opacity: 0; } 
+    }
+    .save-btn {
+      background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+      width: 100%;
+      transition: transform 0.3s;
+    }
+    .save-btn:hover {
+      transform: scale(1.05);
+    }
   `;
   document.head.appendChild(style);
 })();
+
+// ==================== INITIALIZATION ====================
+document.addEventListener("DOMContentLoaded", function () {
+  // Check if we're on the saved items page
+  if (document.getElementById("saved-items-container")) {
+    displaySavedItems();
+  }
+
+  createDefaultAdmin();
+  initializeSignupForm();
+  initializeLoginForm();
+  initializeProfilePage();
+  initializeSettingsPage();
+  initializeLogout();
+  initializeManageUsers();
+});
