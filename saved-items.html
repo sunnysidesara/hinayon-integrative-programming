@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Mars Initiative - Saved Space Agencies</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="dashboard-page">
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+      <div class="dashboard-nav-container">
+        <a href="api.html" class="dashboard-nav-logo">🚀 MARS INITIATIVE</a>
+        <ul class="dashboard-nav-links">
+          <li><a href="api.html">Space Agency Finder</a></li>
+          <li><a href="#" class="active">📌 Saved Items</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Background Effects -->
+    <div class="dashboard-bg-effect">
+      <div class="dashboard-dust"></div>
+      <div class="dashboard-scan"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <div class="api-header">
+        <h1>📌 SAVED SPACE AGENCIES</h1>
+        <p>Your collection of space-faring nations</p>
+      </div>
+
+      <div class="api-container">
+        <!-- Saved Items Container -->
+        <div id="saved-items-container" class="saved-items-grid">
+          <!-- Items will be loaded here via JavaScript -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="saved-actions">
+          <button onclick="clearAllSaved()" class="clear-btn">
+            🗑️ CLEAR ALL
+          </button>
+          <button onclick="window.location.href = 'api.html'" class="back-btn">
+            ← SEARCH MORE
+          </button>
+        </div>
+
+        <!-- Stats Section -->
+        <div id="saved-stats" class="saved-stats"></div>
+      </div>
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="dashboard-footer">
+      <div class="footer-container-simple">
+        <p class="footer-text">🚀 MARS INITIATIVE</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
