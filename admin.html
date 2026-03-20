@@ -21,12 +21,10 @@
         <div class="admin-menu">
           <a href="admin.html" class="active">📊 Dashboard</a>
           <a href="manage-users.html">👥 Users</a>
-          <!-- This now links to manage-users.html -->
           <a href="#">🚀 Missions</a>
           <a href="#">⚡ Resources</a>
           <a href="#">🔒 Security</a>
         </div>
-        <!-- Example in admin.html -->
         <div class="admin-status">
           <p><a href="index.html" class="status-link">🔴 Home</a></p>
           <p>
@@ -41,7 +39,9 @@
         <div class="admin-header">
           <h1>Admin Dashboard</h1>
           <div>
-            <button class="admin-btn">🔔 Alerts (3)</button>
+            <button class="admin-btn" id="refreshStatsBtn">
+              🔄 Refresh Data
+            </button>
             <button class="admin-btn">⚙️ Settings</button>
           </div>
         </div>
@@ -49,17 +49,17 @@
         <!-- Welcome Message -->
         <div class="welcome-box">
           <h2>Welcome, Admin!</h2>
-          <p>Use the menu to manage system data.</p>
+          <p>Use the menu to manage system data. Real-time statistics below.</p>
         </div>
 
-        <!-- Stats in Simple Cards -->
+        <!-- Stats in Simple Cards - LIVE DATA -->
         <div class="stats-row">
           <div class="stat-box">
             <div class="stat-icon">👥</div>
             <div>
-              <h3>1,247</h3>
+              <h3 id="totalUsersCount">0</h3>
               <p>Total Users</p>
-              <small>+12 this week</small>
+              <small id="newUsersThisWeek">0 this week</small>
             </div>
           </div>
 
@@ -75,44 +75,33 @@
           <div class="stat-box">
             <div class="stat-icon">🏛️</div>
             <div>
-              <h3>342</h3>
+              <h3 id="colonyResidentsCount">0</h3>
               <p>Colony Residents</p>
-              <small>+18 this month</small>
+              <small id="newResidentsThisMonth">0 this month</small>
             </div>
           </div>
 
           <div class="stat-box">
             <div class="stat-icon">⚠️</div>
             <div>
-              <h3>3</h3>
+              <h3 id="systemAlertsCount">0</h3>
               <p>System Alerts</p>
-              <small>2 need attention</small>
+              <small id="alertsNeedingAttention">0 need attention</small>
             </div>
           </div>
         </div>
 
         <!-- Quick Lists -->
         <div class="lists-row">
-          <!-- Recent Users -->
+          <!-- Recent Users - LIVE -->
           <div class="list-card">
             <div class="list-header">
               <h3>👥 Recent Users</h3>
               <a href="manage-users.html">View All →</a>
             </div>
-            <div class="list-item">
-              <span>Sarah Chen</span>
-              <span class="badge scientist">Scientist</span>
-              <span class="badge active">Active</span>
-            </div>
-            <div class="list-item">
-              <span>Marcus Webb</span>
-              <span class="badge engineer">Engineer</span>
-              <span class="badge active">Active</span>
-            </div>
-            <div class="list-item">
-              <span>Elena Rodriguez</span>
-              <span class="badge medical">Medical</span>
-              <span class="badge away">Away</span>
+            <div id="recentUsersList" class="recent-users-list">
+              <!-- Dynamic list of recent users will appear here -->
+              <div class="list-item">Loading users...</div>
             </div>
             <button
               class="list-btn"
@@ -152,21 +141,8 @@
             <div class="list-header">
               <h3>📋 Recent Activity</h3>
             </div>
-            <div class="list-item">
-              <span>14:30</span>
-              <span>Profile updated</span>
-            </div>
-            <div class="list-item">
-              <span>14:15</span>
-              <span>Mission parameters</span>
-            </div>
-            <div class="list-item">
-              <span>13:45</span>
-              <span>Resource adjusted</span>
-            </div>
-            <div class="list-item">
-              <span>13:20</span>
-              <span>Security patch</span>
+            <div id="recentActivityList" class="activity-list">
+              <div class="list-item">Loading activity...</div>
             </div>
           </div>
         </div>
@@ -178,7 +154,6 @@
       <p>© 2026 Mars Colonization Initiative | Hinayon, Sarah Mae</p>
     </footer>
 
-    <!-- Link to script.js -->
     <script src="script.js"></script>
   </body>
 </html>
