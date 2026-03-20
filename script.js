@@ -1,17 +1,32 @@
-// ==================== MARS COLONIZATION INITIATIVE ====================
-// Main JavaScript File - All functionality in one place
-
 // ==================== INITIALIZATION ====================
 document.addEventListener("DOMContentLoaded", function () {
+  if (document.querySelector(".admin-container")) {
+    updateAdminDashboard();
+    setupAdminRefresh();
+  }
   // Create default admin account if it doesn't exist
   createDefaultAdmin();
 
-  initializeSignupForm();
-  initializeLoginForm();
-  initializeProfilePage();
-  initializeSettingsPage();
-  initializeLogout();
-  initializeManageUsers();
+  // Initialize page‑specific features
+  initializeSignupForm(); // runs only on signup page
+  initializeLoginForm(); // runs only on login page
+  initializeProfilePage(); // runs only on profile page
+  initializeSettingsPage(); // runs only on settings page
+  initializeLogout(); // attaches logout to elements with class 'logout-link'
+  initializeManageUsers(); // runs only on manage-users page
+
+  // Saved items page
+  if (document.getElementById("saved-items-container")) {
+    displaySavedPlanets();
+  }
+
+  // Attach Enter key listener for planet search (only if input exists)
+  const planetInput = document.getElementById("planetInput");
+  if (planetInput) {
+    planetInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") searchPlanet();
+    });
+  }
 });
 
 // ==================== CREATE DEFAULT ADMIN ====================
@@ -23,9 +38,8 @@ function createDefaultAdmin() {
   const adminExists = users.some((user) => user.email === adminEmail);
 
   if (!adminExists) {
-    // Create admin user
     const adminUser = {
-      id: 1, // First user
+      id: 1,
       fullname: "Mission Commander",
       name: "Mission Commander",
       email: adminEmail,
@@ -33,21 +47,17 @@ function createDefaultAdmin() {
       role: "Commander",
       registeredDate: new Date().toISOString(),
     };
-
     users.push(adminUser);
     localStorage.setItem("registeredUsers", JSON.stringify(users));
 
-    // Also add to manageUsers
     const adminManageUser = {
       id: 1,
       name: "Mission Commander",
       email: adminEmail,
       role: "Commander",
     };
-
     manageUsers.push(adminManageUser);
     localStorage.setItem("manageUsers", JSON.stringify(manageUsers));
-
     console.log("Default admin account created");
   }
 }
@@ -56,6 +66,9 @@ function createDefaultAdmin() {
 function initializeProfilePage() {
   const profilePage = document.querySelector(".dashboard-main");
   if (!profilePage) return;
+
+  // ADD THIS CHECK: only proceed if this is really the profile page
+  if (!document.querySelector(".profile-name")) return;
 
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const userEmail = localStorage.getItem("userEmail");
@@ -156,7 +169,6 @@ function loadUserSettings(user) {
     const themeRadio = document.getElementById("theme-" + savedTheme);
     if (themeRadio) themeRadio.checked = true;
   } else {
-    // Default to mars theme
     const marsTheme = document.getElementById("theme-mars");
     if (marsTheme) marsTheme.checked = true;
   }
@@ -176,7 +188,6 @@ function loadUserSettings(user) {
 }
 
 function setupSettingsListeners(currentUser, users) {
-  // Save All Changes button
   const saveBtn =
     document.getElementById("save-settings") ||
     document.querySelector(".save-btn");
@@ -186,7 +197,6 @@ function setupSettingsListeners(currentUser, users) {
       saveSettings(currentUser, users);
     });
 
-  // Password change validation
   const newPassword = document.getElementById("new-password");
   const confirmPassword = document.getElementById("confirm-password");
   if (newPassword && confirmPassword) {
@@ -197,7 +207,6 @@ function setupSettingsListeners(currentUser, users) {
     });
   }
 
-  // Delete account button
   const deleteBtn =
     document.getElementById("delete-btn") ||
     document.querySelector(".delete-btn");
@@ -207,7 +216,6 @@ function setupSettingsListeners(currentUser, users) {
       deleteAccount(currentUser);
     });
 
-  // Mission transfer button
   const transferBtn =
     document.getElementById("transfer-btn") ||
     document.querySelector(".danger-btn:not(.delete-btn)");
@@ -220,7 +228,6 @@ function setupSettingsListeners(currentUser, users) {
       );
     });
 
-  // Back to profile link
   const backBtn =
     document.getElementById("back-to-profile") ||
     document.querySelector(".back-btn");
@@ -239,7 +246,6 @@ function saveSettings(currentUser, users) {
   const confirmPassword = document.getElementById("confirm-password");
   let isValid = true;
 
-  // Validate email if changed
   if (emailField && emailField.value !== currentUser.email) {
     if (!validateEmail(emailField.value)) {
       showError(emailField, "Please enter a valid email");
@@ -259,7 +265,6 @@ function saveSettings(currentUser, users) {
     }
   }
 
-  // Validate password change if fields are filled
   if (newPassword && newPassword.value) {
     if (!currentPassword || currentPassword.value !== currentUser.password) {
       showError(currentPassword, "Current password is incorrect");
@@ -285,7 +290,6 @@ function saveSettings(currentUser, users) {
   }
 
   if (isValid) {
-    // Save address
     if (addressField) {
       localStorage.setItem(
         "userAddress_" + currentUser.email,
@@ -293,14 +297,12 @@ function saveSettings(currentUser, users) {
       );
     }
 
-    // Save theme preference
     const selectedTheme = document.querySelector('input[name="theme"]:checked');
     if (selectedTheme) {
       const themeId = selectedTheme.id.replace("theme-", "");
       localStorage.setItem("userTheme_" + currentUser.email, themeId);
     }
 
-    // Save notification preferences
     const notifications = document.getElementById("notifications");
     const locationSharing = document.getElementById("location-sharing");
     const dataSync = document.getElementById("data-sync");
@@ -318,7 +320,6 @@ function saveSettings(currentUser, users) {
     if (dataSync)
       localStorage.setItem("sync_" + currentUser.email, dataSync.checked);
 
-    // Update user in registeredUsers list
     const userIndex = users.findIndex((u) => u.email === currentUser.email);
     if (userIndex !== -1) {
       users[userIndex] = currentUser;
@@ -326,7 +327,6 @@ function saveSettings(currentUser, users) {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
     }
 
-    // Also update in manageUsers if exists
     let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
     const manageUserIndex = manageUsers.findIndex(
       (u) => u.email === currentUser.email,
@@ -343,7 +343,6 @@ function saveSettings(currentUser, users) {
 
     showNotification("Settings saved successfully!", "success");
 
-    // Clear password fields
     if (currentPassword) currentPassword.value = "";
     if (newPassword) newPassword.value = "";
     if (confirmPassword) confirmPassword.value = "";
@@ -357,39 +356,30 @@ function deleteAccount(currentUser) {
       "⚠️ WARNING: This will permanently delete your colony account. Are you sure?",
     )
   ) {
-    // Get current users
     const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
     const manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
 
-    // Filter out the current user from registeredUsers
     const updatedUsers = users.filter((u) => u.email !== currentUser.email);
     localStorage.setItem("registeredUsers", JSON.stringify(updatedUsers));
 
-    // Also filter out from manageUsers (admin page)
     const updatedManageUsers = manageUsers.filter(
       (u) => u.email !== currentUser.email,
     );
     localStorage.setItem("manageUsers", JSON.stringify(updatedManageUsers));
 
-    // Clear session
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userFullName");
     localStorage.removeItem("currentUser");
 
     showNotification("Account deleted. We're sorry to see you go.", "success");
-
-    // Redirect to home page
     setTimeout(() => (window.location.href = "index.html"), 2000);
   }
 }
 
 // ==================== LOGOUT ====================
-// ==================== LOGOUT ====================
 function initializeLogout() {
-  // Only look for links with the 'logout-link' class
   const logoutLink = document.querySelector(".logout-link");
-
   if (logoutLink) {
     logoutLink.addEventListener("click", (e) => {
       e.preventDefault();
@@ -402,6 +392,7 @@ function initializeLogout() {
     });
   }
 }
+
 // ==================== SIGNUP FORM ====================
 function initializeSignupForm() {
   const signupForm = document.querySelector(".signup-form");
@@ -418,7 +409,6 @@ function initializeSignupForm() {
     const departureDate = document.getElementById("departure-date");
     let isValid = true;
 
-    // Validation
     if (!fullname.value) {
       showError(fullname, "Full name is required");
       isValid = false;
@@ -482,20 +472,16 @@ function initializeSignupForm() {
         return;
       }
 
-      // Get current manageUsers
       let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
 
-      // Calculate next ID based on existing users
       let nextId;
       if (manageUsers.length === 0) {
-        nextId = 1; // Start with 1 if empty
+        nextId = 1;
       } else {
-        // Get the highest ID and add 1
         const maxId = Math.max(...manageUsers.map((u) => u.id));
         nextId = maxId + 1;
       }
 
-      // Also check registeredUsers for any users not in manageUsers
       if (users.length > 0) {
         const maxRegisteredId = Math.max(...users.map((u) => u.id || 0));
         if (maxRegisteredId >= nextId) {
@@ -517,7 +503,7 @@ function initializeSignupForm() {
       }
 
       const userData = {
-        id: nextId, // This will be 1, 2, 3, etc.
+        id: nextId,
         fullname: fullname.value.trim(),
         name: fullname.value.trim(),
         email: email.value.toLowerCase(),
@@ -530,7 +516,6 @@ function initializeSignupForm() {
       users.push(userData);
       localStorage.setItem("registeredUsers", JSON.stringify(users));
 
-      // Save to manageUsers
       saveToManageUsers({
         id: nextId,
         name: fullname.value.trim(),
@@ -600,12 +585,11 @@ function initializeLoginForm() {
           "success",
         );
 
-        // ✅ CHECK IF USER IS ADMIN AND REDIRECT APPROPRIATELY
         setTimeout(() => {
           if (email.value.toLowerCase() === "marsinitiative@admin.com") {
-            window.location.href = "admin.html"; // Admin goes to admin dashboard
+            window.location.href = "admin.html";
           } else {
-            window.location.href = "profile.html"; // Regular users go to profile
+            window.location.href = "profile.html";
           }
         }, 1500);
       } else {
@@ -620,14 +604,166 @@ function initializeLoginForm() {
   });
 }
 
-// ==================== MANAGE USERS ====================
-// Start with an empty array - only users you add or sign up will appear
-let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
+// ==================== UPDATE ADMIN DASHBOARD ====================
+function updateAdminDashboard() {
+  // Get all registered users
+  const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
 
+  // Get all saved planets (for activity tracking)
+  const savedPlanets = JSON.parse(localStorage.getItem("savedPlanets")) || [];
+
+  // Update Total Users count
+  const totalUsersCount = document.getElementById("totalUsersCount");
+  if (totalUsersCount) totalUsersCount.textContent = users.length;
+
+  // Update Colony Residents count (excluding admin)
+  const regularUsers = users.filter(
+    (u) => u.email !== "marsinitiative@admin.com",
+  );
+  const colonyResidentsCount = document.getElementById("colonyResidentsCount");
+  if (colonyResidentsCount)
+    colonyResidentsCount.textContent = regularUsers.length;
+
+  // Calculate new users this week (last 7 days)
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const newUsersThisWeek = users.filter((user) => {
+    const regDate = new Date(user.registeredDate);
+    return regDate >= oneWeekAgo;
+  }).length;
+
+  const newUsersSpan = document.getElementById("newUsersThisWeek");
+  if (newUsersSpan) newUsersSpan.textContent = `${newUsersThisWeek} this week`;
+
+  // Calculate new residents this month
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+  const newResidentsThisMonth = regularUsers.filter((user) => {
+    const regDate = new Date(user.registeredDate);
+    return regDate >= oneMonthAgo;
+  }).length;
+
+  const newResidentsSpan = document.getElementById("newResidentsThisMonth");
+  if (newResidentsSpan)
+    newResidentsSpan.textContent = `${newResidentsThisMonth} this month`;
+
+  // System Alerts (example: low resources)
+  let alertCount = 0;
+  let alertsNeedAttention = 0;
+
+  // Check resource levels
+  const resources = {
+    oxygen: 94,
+    water: 67,
+    power: 87,
+    food: 42,
+  };
+
+  if (resources.food < 50) {
+    alertCount++;
+    alertsNeedAttention++;
+  }
+  if (resources.water < 70) {
+    alertCount++;
+  }
+
+  const systemAlertsCount = document.getElementById("systemAlertsCount");
+  if (systemAlertsCount) systemAlertsCount.textContent = alertCount;
+
+  const alertsNeedingAttention = document.getElementById(
+    "alertsNeedingAttention",
+  );
+  if (alertsNeedingAttention)
+    alertsNeedingAttention.textContent = `${alertsNeedAttention} need attention`;
+
+  // Display recent users (last 3)
+  const recentUsersContainer = document.getElementById("recentUsersList");
+  if (recentUsersContainer) {
+    const recentUsers = [...users].reverse().slice(0, 3);
+    if (recentUsers.length === 0) {
+      recentUsersContainer.innerHTML =
+        '<div class="list-item">No users yet</div>';
+    } else {
+      recentUsersContainer.innerHTML = recentUsers
+        .map(
+          (user) => `
+        <div class="list-item">
+          <span class="user-name">${user.fullname || user.name}</span>
+          <span class="badge ${(user.role || "Other").toLowerCase()}">${user.role || "Colonist"}</span>
+          <span class="badge active">Active</span>
+        </div>
+      `,
+        )
+        .join("");
+    }
+  }
+
+  // Display recent activity (last 5 saved planets or registrations)
+  const recentActivityContainer = document.getElementById("recentActivityList");
+  if (recentActivityContainer) {
+    // Combine user registrations and saved planets
+    const activities = [];
+
+    // Add user registrations
+    users.forEach((user) => {
+      if (user.registeredDate) {
+        activities.push({
+          time: new Date(user.registeredDate),
+          desc: `${user.fullname || user.name} registered`,
+          type: "register",
+        });
+      }
+    });
+
+    // Add saved planets
+    savedPlanets.forEach((planet) => {
+      activities.push({
+        time: new Date(planet.savedDate),
+        desc: `Saved planet: ${planet.name}`,
+        type: "save",
+      });
+    });
+
+    // Sort by time (most recent first)
+    activities.sort((a, b) => b.time - a.time);
+
+    // Get last 5 activities
+    const recentActivities = activities.slice(0, 5);
+
+    if (recentActivities.length === 0) {
+      recentActivityContainer.innerHTML =
+        '<div class="list-item">No recent activity</div>';
+    } else {
+      recentActivityContainer.innerHTML = recentActivities
+        .map(
+          (activity) => `
+        <div class="list-item">
+          <span class="activity-time">${activity.time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+          <span class="activity-desc">${activity.desc}</span>
+        </div>
+      `,
+        )
+        .join("");
+    }
+  }
+}
+
+// ==================== REFRESH BUTTON ====================
+function setupAdminRefresh() {
+  const refreshBtn = document.getElementById("refreshStatsBtn");
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => {
+      updateAdminDashboard();
+      showNotification("Dashboard data refreshed!", "success");
+    });
+  }
+}
+
+// ==================== MANAGE USERS ====================
+let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
 let nextManageId =
   manageUsers.length > 0 ? Math.max(...manageUsers.map((u) => u.id)) + 1 : 1;
 
-// NEW FUNCTION: Update nextManageId after any changes
 function updateNextManageId() {
   nextManageId =
     manageUsers.length > 0 ? Math.max(...manageUsers.map((u) => u.id)) + 1 : 1;
@@ -649,7 +785,6 @@ function hideForm() {
   document.getElementById("userPassword").value = "";
 }
 
-// ✅ UPDATED FUNCTION WITH EMAIL VALIDATION
 function addUser() {
   let name = document.getElementById("userName").value;
   let email = document.getElementById("userEmail").value;
@@ -671,23 +806,19 @@ function addUser() {
     return;
   }
 
-  // ✅ CHECK FOR EXISTING EMAIL IN manageUsers
   const emailExists = manageUsers.some(
     (user) => user.email.toLowerCase() === email.toLowerCase(),
   );
-
   if (emailExists) {
     alert("This email is already registered. Please use a different email.");
     return;
   }
 
-  // ✅ ALSO CHECK IN registeredUsers
   let registeredUsers =
     JSON.parse(localStorage.getItem("registeredUsers")) || [];
   const registeredEmailExists = registeredUsers.some(
     (user) => user.email.toLowerCase() === email.toLowerCase(),
   );
-
   if (registeredEmailExists) {
     alert("This email is already registered. Please use a different email.");
     return;
@@ -715,7 +846,6 @@ function saveToRegisteredUsers(user, password) {
   let registeredUsers =
     JSON.parse(localStorage.getItem("registeredUsers")) || [];
   const exists = registeredUsers.some((u) => u.email === user.email);
-
   if (!exists) {
     registeredUsers.push({
       id: user.id,
@@ -768,10 +898,7 @@ function refreshManageTable() {
 
 function saveToManageUsers(user) {
   let manageUsers = JSON.parse(localStorage.getItem("manageUsers")) || [];
-
-  // Check if user already exists
   const exists = manageUsers.some((u) => u.email === user.email);
-
   if (!exists) {
     manageUsers.push(user);
     localStorage.setItem("manageUsers", JSON.stringify(manageUsers));
@@ -875,7 +1002,7 @@ function showNotification(message, type = "info") {
     position: fixed; top: 20px; right: 20px; padding: 15px 25px;
     border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
     animation: slideIn 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    background-color: ${type === "success" ? "#4CAF50" : "#f44336"};
+    background-color: ${type === "success" ? "#4CAF50" : type === "error" ? "#f44336" : "#2196F3"};
   `;
   notification.textContent = message;
   document.body.appendChild(notification);
@@ -886,268 +1013,218 @@ function showNotification(message, type = "info") {
   }, 3000);
 }
 
-// ==================== API SAVE FEATURE ====================
-
-// Space agencies data
-const spaceAgencies = {
-  USA: "NASA, SpaceX",
-  RUS: "Roscosmos",
-  CHN: "CNSA",
-  JPN: "JAXA",
-  IND: "ISRO",
-  FRA: "CNES",
-  GER: "DLR",
-  CAN: "CSA",
-  UAE: "UAESA",
-  ITA: "ASI",
-  ISR: "ISA",
-  KOR: "KARI",
-  UK: "UKSA",
-};
-
-// Mars facts
-const marsFacts = [
-  "🌍 Over 70 countries have space programs!",
-  "🚀 The Mars Initiative has supporters in 40+ countries",
-  "🔴 A Mars mission will need global cooperation",
-  "🛸 The first Mars mission is planned for 2030",
-  "🌡️ Mars has an average temperature of -60°C",
-  "⏰ A day on Mars is 24 hours and 37 minutes",
-  "🏔️ Olympus Mons on Mars is 3x taller than Everest",
-];
-
-// ==================== SEARCH FUNCTION ====================
-async function searchCountry() {
-  const countryInput = document.getElementById("countryInput");
-  const country = countryInput.value.trim();
-
-  if (!country) {
-    showNotification("Please enter a country name", "error");
+// ==================== SEARCH PLANETS====================
+function searchPlanet(planetName) {
+  const input = document.getElementById("planetInput");
+  const name = planetName || (input ? input.value.trim() : "");
+  if (!name) {
+    alert("Please enter a planet name");
     return;
   }
 
-  try {
-    // API CALL
-    const response = await fetch(
-      `https://restcountries.com/v3.1/name/${country}`,
-    );
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML =
+    '<div class="loading">🔭 Exploring the solar system...</div>';
 
-    if (!response.ok) {
-      throw new Error("Country not found");
-    }
+  fetch("https://api.xplorerapp.net/planets.json")
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+      return response.json();
+    })
+    .then((data) => {
+      // Extract planets array – handle various response shapes
+      let planetsList = [];
+      if (Array.isArray(data)) {
+        planetsList = data;
+      } else if (data.planets && Array.isArray(data.planets)) {
+        planetsList = data.planets;
+      } else if (data.results && Array.isArray(data.results)) {
+        planetsList = data.results;
+      } else if (data.data && Array.isArray(data.data)) {
+        planetsList = data.data;
+      } else {
+        planetsList = data; // fallback: assume data is the array
+      }
 
-    const data = await response.json();
+      const planet = planetsList.find(
+        (p) => p.name && p.name.toLowerCase() === name.toLowerCase(),
+      );
 
-    // Get country data
-    const countryData = data[0];
-    const countryCode = countryData.cca3;
-    const hasSpace = spaceAgencies[countryCode];
+      if (planet) {
+        // Format mass in scientific notation nicely
+        const massFormatted = planet.mass_kg
+          ? planet.mass_kg.toExponential(2)
+          : "N/A";
+        // Build atmosphere description if available
+        let atmosphereText = "No atmosphere data";
+        if (planet.atmosphere && planet.atmosphere.composition) {
+          const comp = planet.atmosphere.composition;
+          atmosphereText = `🌬️ Nitrogen: ${comp.nitrogen_percent}%, Oxygen: ${comp.oxygen_percent}%`;
+        }
 
-    // Create unique ID for this search result
-    const searchId = countryCode + "-" + Date.now();
-
-    document.getElementById("result").innerHTML = `
-      <div class="result-card" id="result-${searchId}">
-        <div class="country-header">
-          <img src="${countryData.flags.png}" alt="${countryData.flags.alt || `Flag of ${countryData.name.common}`}">
-          <div class="country-name">${countryData.name.common}</div>
-        </div>
-        <div class="info-grid">
-          <div class="info-item">
-            <div class="info-label">CAPITAL</div>
-            <div class="info-value">${countryData.capital ? countryData.capital[0] : "N/A"}</div>
+        resultDiv.innerHTML = `
+          <div class="planet-result">
+            <h2>🪐 ${planet.name}</h2>
+            <div class="planet-detail"><strong>Type</strong> ${planet.type || "Unknown"}</div>
+            <div class="planet-detail"><strong>Radius</strong> ${planet.radius_km?.toLocaleString() || "N/A"} km</div>
+            <div class="planet-detail"><strong>Mass</strong> ${massFormatted} kg</div>
+            <div class="planet-detail"><strong>Gravity</strong> ${planet.gravity_m_s2 || "N/A"} m/s²</div>
+            <div class="planet-detail"><strong>Distance from Earth</strong> ${planet.distance_from_earth_au ?? "N/A"} AU</div>
+            <div class="planet-detail"><strong>Orbit Period</strong> ${planet.orbit_period_days?.toFixed(2) || "N/A"} days</div>
+            <div class="planet-detail"><strong>Avg. Temperature</strong> ${planet.average_temperature_celsius ?? "N/A"} °C</div>
+            <div class="planet-fact">✨ ${atmosphereText}</div>
+            <button class="save-btn" onclick='savePlanetFromData(
+              "${planet.name}",
+              ${planet.radius_km || "null"},
+              ${planet.mass_kg || "null"},
+              ${planet.gravity_m_s2 || "null"},
+              ${planet.distance_from_earth_au ?? "null"},
+              ${planet.orbit_period_days || "null"},
+              ${planet.average_temperature_celsius ?? "null"},
+              "${planet.type || "Unknown"}",
+              "${atmosphereText.replace(/"/g, '\\"')}"
+            )'>💾 SAVE TO HISTORY</button>
           </div>
-          <div class="info-item">
-            <div class="info-label">REGION</div>
-            <div class="info-value">${countryData.region}</div>
+        `;
+      } else {
+        // ✅ Simplified error message – no long list of planet names
+        resultDiv.innerHTML = `
+          <div class="error-message">
+            ❌ Nothing found for "${name}". Please try another name.
           </div>
-          <div class="info-item">
-            <div class="info-label">POPULATION</div>
-            <div class="info-value">${countryData.population.toLocaleString()}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">SPACE AGENCY</div>
-            <div class="info-value">${hasSpace ? hasSpace : "None"}</div>
-          </div>
-        </div>
-        <div class="space-status ${hasSpace ? "has-space" : "no-space"}">
-          ${hasSpace ? `✅ HAS SPACE PROGRAM: ${hasSpace}` : "❌ No space program yet"}
-        </div>
-        <button onclick='saveCountry("${countryData.name.common}", "${countryData.capital ? countryData.capital[0] : "N/A"}", "${countryData.region}", "${countryData.population}", "${countryData.flags.png}", "${hasSpace ? hasSpace : "None"}")' class="save-btn">
-          💾 SAVE THIS COUNTRY
-        </button>
-      </div>
-    `;
+        `;
+      }
+    })
+    .catch((error) => {
+      console.error("API error:", error);
+      resultDiv.innerHTML =
+        '<div class="error-message">⚠️ Could not reach planet database. Please try again later.</div>';
+    });
 
-    // Random fact
-    document.getElementById("marsFact").innerHTML =
-      marsFacts[Math.floor(Math.random() * marsFacts.length)];
-  } catch (error) {
-    document.getElementById("result").innerHTML = `
-      <div class="error-card">
-        ❌ Country not found. Please check the spelling and try again.
-      </div>
-    `;
-  }
+  if (!planetName && input) input.value = "";
 }
-
-// ==================== SAVE FUNCTION ====================
-function saveCountry(name, capital, region, population, flag, spaceAgency) {
-  // Create country object
-  const countryData = {
-    id: Date.now(), // Unique ID using timestamp
+// ==================== SAVE PLANET TO HISTORY ====================
+function savePlanetFromData(
+  name,
+  radiusKm,
+  massKg,
+  gravity,
+  distanceAu,
+  orbitDays,
+  tempC,
+  type,
+  atmosphereDesc,
+) {
+  const planetData = {
     name: name,
-    capital: capital,
-    region: region,
-    population: population,
-    flag: flag,
-    spaceAgency: spaceAgency,
-    dateSaved: new Date().toLocaleString(),
+    radiusKm: radiusKm,
+    massKg: massKg,
+    gravity: gravity,
+    distanceAu: distanceAu,
+    orbitDays: orbitDays,
+    tempC: tempC,
+    type: type,
+    atmosphereDesc: atmosphereDesc,
+    savedDate: new Date().toLocaleString(),
   };
 
-  // Get existing saved items from localStorage
-  let savedItems = JSON.parse(localStorage.getItem("savedCountries")) || [];
+  let savedPlanets = JSON.parse(localStorage.getItem("savedPlanets")) || [];
 
-  // Check for duplicates (by country name)
-  const isDuplicate = savedItems.some(
-    (item) => item.name.toLowerCase() === name.toLowerCase(),
-  );
-
-  if (isDuplicate) {
+  if (savedPlanets.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
     showNotification(`${name} is already saved!`, "error");
     return;
   }
 
-  // Add new item
-  savedItems.push(countryData);
-
-  // Save back to localStorage
-  localStorage.setItem("savedCountries", JSON.stringify(savedItems));
-
-  // Show success message
-  showNotification(`${name} saved successfully! 🌟`, "success");
+  savedPlanets.push(planetData);
+  localStorage.setItem("savedPlanets", JSON.stringify(savedPlanets));
+  showNotification(`${name} saved to history! 🌟`, "success");
 }
 
-// ==================== DISPLAY SAVED ITEMS (for saveitems.html) ====================
-function displaySavedItems() {
+// ==================== DISPLAY SAVED PLANETS ====================
+function displaySavedPlanets() {
   const container = document.getElementById("saved-items-container");
   const statsDiv = document.getElementById("saved-stats");
-  const savedItems = JSON.parse(localStorage.getItem("savedCountries")) || [];
+  const savedPlanets = JSON.parse(localStorage.getItem("savedPlanets")) || [];
 
   if (!container) return;
 
-  if (savedItems.length === 0) {
-    // Empty state
+  if (savedPlanets.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">📭</div>
-        <h3>No saved items yet</h3>
-        <p>Search for countries and save space agencies to build your collection!</p>
-        <button onclick="window.location.href='api.html'" class="search-btn">
-          🔍 SEARCH COUNTRIES
-        </button>
+        <h3>No saved planets yet</h3>
+        <p>Search for planets and save them to build your collection!</p>
+        <button onclick="window.location.href='api.html'" class="search-btn">🔍 SEARCH PLANETS</button>
       </div>
     `;
     if (statsDiv) statsDiv.innerHTML = "";
     return;
   }
 
-  // Display saved items
   let html = '<div class="saved-grid">';
-
-  savedItems.forEach((item, index) => {
+  savedPlanets.forEach((planet, index) => {
+    const massFormatted = planet.massKg
+      ? planet.massKg.toExponential(2)
+      : "N/A";
     html += `
       <div class="saved-card">
         <div class="saved-card-header">
-          <img src="${item.flag}" alt="Flag of ${item.name}" class="saved-flag">
-          <h3>${item.name}</h3>
+          <h3>🪐 ${planet.name}</h3>
+          <span class="planet-type">${planet.type || "Unknown"}</span>
         </div>
         <div class="saved-card-body">
-          <p><strong>Capital:</strong> ${item.capital}</p>
-          <p><strong>Region:</strong> ${item.region}</p>
-          <p><strong>Population:</strong> ${Number(item.population).toLocaleString()}</p>
-          <p><strong>Space Agency:</strong></p>
-          <p class="agency-name">${item.spaceAgency}</p>
-          <p class="saved-date">Saved: ${item.dateSaved}</p>
+          <p><strong>Radius:</strong> ${planet.radiusKm?.toLocaleString() || "N/A"} km</p>
+          <p><strong>Mass:</strong> ${massFormatted} kg</p>
+          <p><strong>Gravity:</strong> ${planet.gravity || "N/A"} m/s²</p>
+          <p><strong>Distance from Earth:</strong> ${planet.distanceAu ?? "N/A"} AU</p>
+          <p><strong>Orbit Period:</strong> ${planet.orbitDays?.toFixed(2) || "N/A"} days</p>
+          <p><strong>Temp:</strong> ${planet.tempC ?? "N/A"} °C</p>
+          <p class="atmosphere">${planet.atmosphereDesc || "No atmosphere data"}</p>
+          <p class="saved-date">Saved: ${planet.savedDate}</p>
         </div>
         <div class="saved-card-actions">
-          <button onclick="removeSavedItem(${index})" class="remove-btn">
-            ❌ REMOVE
-          </button>
+          <button onclick="removeSavedPlanet(${index})" class="remove-btn">❌ REMOVE</button>
         </div>
       </div>
     `;
   });
-
   html += "</div>";
   container.innerHTML = html;
 
-  // Update stats
   if (statsDiv) {
-    const countriesWithAgency = savedItems.filter(
-      (item) => item.spaceAgency !== "None",
-    ).length;
-    statsDiv.innerHTML = `
-      <p>Total: ${savedItems.length} saved | 
-      With Space Agency: ${countriesWithAgency} | 
-      Without: ${savedItems.length - countriesWithAgency}</p>
-    `;
+    statsDiv.innerHTML = `<p>Total saved planets: ${savedPlanets.length}</p>`;
+  }
+  adjustSavedGrid();
+}
+
+// ==================== REMOVE SAVED PLANET ====================
+function removeSavedPlanet(index) {
+  let savedPlanets = JSON.parse(localStorage.getItem("savedPlanets")) || [];
+  if (index >= 0 && index < savedPlanets.length) {
+    const removed = savedPlanets[index].name;
+    savedPlanets.splice(index, 1);
+    localStorage.setItem("savedPlanets", JSON.stringify(savedPlanets));
+    displaySavedPlanets();
+    showNotification(`${removed} removed from saved planets`, "info");
   }
 }
 
-// ==================== SCROLL SAVED ITEMS ====================
-function scrollSavedItems(direction) {
-  const container = document.querySelector(".saved-items-grid");
-  const cardWidth = 410; // Card width (380) + gap (30)
-
-  if (direction === "left") {
-    container.scrollBy({ left: -cardWidth, behavior: "smooth" });
-  } else {
-    container.scrollBy({ left: cardWidth, behavior: "smooth" });
-  }
-}
-// ==================== REMOVE SAVED ITEM ====================
-function removeSavedItem(index) {
-  let savedItems = JSON.parse(localStorage.getItem("savedCountries")) || [];
-
-  if (index >= 0 && index < savedItems.length) {
-    const removedItem = savedItems[index].name;
-    savedItems.splice(index, 1);
-    localStorage.setItem("savedCountries", JSON.stringify(savedItems));
-    displaySavedItems();
-    showNotification(`${removedItem} removed from saved items`, "info");
+// ==================== CLEAR ALL SAVED PLANETS ====================
+function clearAllSavedPlanets() {
+  if (confirm("Clear all saved planets? This cannot be undone.")) {
+    localStorage.removeItem("savedPlanets");
+    displaySavedPlanets();
+    showNotification("All saved planets cleared", "info");
   }
 }
 
-// ==================== CLEAR ALL SAVED ITEMS ====================
-function clearAllSaved() {
-  if (
-    confirm(
-      "Are you sure you want to clear all saved items? This cannot be undone.",
-    )
-  ) {
-    localStorage.removeItem("savedCountries");
-    displaySavedItems();
-    showNotification("All saved items cleared", "info");
-  }
-}
-
-// ==================== HANDLE ENTER KEY ====================
-function handleKeyPress(event) {
-  if (event.key === "Enter") {
-    searchCountry();
-  }
-}
-
-// ==================== NOTIFICATION FUNCTION ====================
+// ==================== UI HELPERS ====================
 function showNotification(message, type = "info") {
-  // Remove existing notification
-  const existingNotification = document.querySelector(".api-notification");
+  const existingNotification = document.querySelector(".auth-notification");
   if (existingNotification) existingNotification.remove();
 
-  // Create notification
   const notification = document.createElement("div");
-  notification.className = "api-notification";
+  notification.className = "auth-notification";
   notification.style.cssText = `
     position: fixed; top: 20px; right: 20px; padding: 15px 25px;
     border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
@@ -1157,56 +1234,20 @@ function showNotification(message, type = "info") {
   notification.textContent = message;
   document.body.appendChild(notification);
 
-  // Remove after 3 seconds
   setTimeout(() => {
     notification.style.animation = "slideOut 0.3s ease";
     setTimeout(() => notification.remove(), 300);
   }, 3000);
 }
 
-// Add animation styles
+// ==================== ANIMATION STYLES ====================
 (function addAnimationStyles() {
   const style = document.createElement("style");
   style.textContent = `
-    @keyframes slideIn { 
-      from { transform: translateX(100%); opacity: 0; } 
-      to { transform: translateX(0); opacity: 1; } 
-    }
-    @keyframes slideOut { 
-      from { transform: translateX(0); opacity: 1; } 
-      to { transform: translateX(100%); opacity: 0; } 
-    }
-    .save-btn {
-      background: linear-gradient(45deg, #ff6b6b, #ff8e53);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-      width: 100%;
-      transition: transform 0.3s;
-    }
-    .save-btn:hover {
-      transform: scale(1.05);
-    }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    .save-btn { background: linear-gradient(45deg, #ff6b6b, #ff8e53); color: white; border: none; padding: 10px 20px; border-radius: 0; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; transition: transform 0.3s; }
+    .save-btn:hover { transform: scale(1.05); }
   `;
   document.head.appendChild(style);
 })();
-
-// ==================== INITIALIZATION ====================
-document.addEventListener("DOMContentLoaded", function () {
-  // Check if we're on the saved items page
-  if (document.getElementById("saved-items-container")) {
-    displaySavedItems();
-  }
-
-  createDefaultAdmin();
-  initializeSignupForm();
-  initializeLoginForm();
-  initializeProfilePage();
-  initializeSettingsPage();
-  initializeLogout();
-  initializeManageUsers();
-});
