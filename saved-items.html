@@ -3,23 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Mars Initiative - Saved Space Agencies</title>
+    <title>Mars Initiative – Saved Planets</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="dashboard-page">
+    <!-- Background Video with Overlay (same as api.html) -->
+    <video class="bg-video" autoplay muted loop playsinline>
+      <source src="assets/apiback.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div class="bg-overlay"></div>
+
     <!-- Navigation -->
     <nav class="dashboard-nav">
       <div class="dashboard-nav-container">
-        <a href="api.html" class="dashboard-nav-logo">🚀 MARS INITIATIVE</a>
+        <a href="api.html" class="dashboard-nav-logo">MARS INITIATIVE</a>
         <ul class="dashboard-nav-links">
-          <li><a href="api.html">Space Agency Finder</a></li>
-          <li><a href="#" class="active">📌 Saved Items</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="api.html">What's Beyond Mars</a></li>
+          <li><a href="#" class="active">View History</a></li>
         </ul>
       </div>
     </nav>
 
-    <!-- Background Effects -->
+    <!-- Background Effects (dust & scan lines – optional, can keep) -->
     <div class="dashboard-bg-effect">
       <div class="dashboard-dust"></div>
       <div class="dashboard-scan"></div>
@@ -27,20 +34,20 @@
 
     <!-- Main Content -->
     <main class="dashboard-main">
-      <div class="api-header">
-        <h1>📌 SAVED SPACE AGENCIES</h1>
-        <p>Your collection of space-faring nations</p>
+      <div class="saveditems-header">
+        <h1>GOING BEYOND MARS</h1>
       </div>
 
       <div class="api-container">
-        <!-- Saved Items Container -->
-        <div id="saved-items-container" class="saved-items-grid">
+        <!-- Saved Items Grid -->
+        <div id="saved-items-container" class="saved-grid">
           <!-- Items will be loaded here via JavaScript -->
         </div>
 
         <!-- Action Buttons -->
         <div class="saved-actions">
-          <button onclick="clearAllSaved()" class="clear-btn">
+          <!-- FIX 1: Call clearAllSavedPlanets() instead of clearAllSaved() -->
+          <button onclick="clearAllSavedPlanets()" class="clear-btn">
             🗑️ CLEAR ALL
           </button>
           <button onclick="window.location.href = 'api.html'" class="back-btn">
@@ -53,13 +60,42 @@
       </div>
     </main>
 
-    <!-- Simple Footer -->
+    <!-- Footer -->
     <footer class="dashboard-footer">
       <div class="footer-container-simple">
-        <p class="footer-text">🚀 MARS INITIATIVE</p>
+        <p class="footer-text">
+          © 2026 Mars Colonization Initiative | Data from Explorer APIs
+        </p>
       </div>
     </footer>
 
     <script src="script.js"></script>
+    <script>
+      function adjustSavedGrid() {
+        const grid = document.querySelector(".saved-grid");
+        if (!grid) return;
+        const cards = grid.querySelectorAll(".saved-card");
+        if (cards.length === 1) {
+          grid.style.justifyContent = "center";
+        } else {
+          grid.style.justifyContent = "flex-start";
+        }
+      }
+
+      // Run when page loads and after any changes (e.g., clear all)
+      document.addEventListener("DOMContentLoaded", adjustSavedGrid);
+      window.addEventListener("storage", adjustSavedGrid); // in case another tab modifies
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (typeof displaySavedPlanets === "function") {
+          displaySavedPlanets();
+        } else {
+          console.error(
+            "displaySavedPlanets function not found. Make sure script.js is loaded correctly.",
+          );
+        }
+      });
+    </script>
   </body>
 </html>
