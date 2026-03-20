@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mars Colony | User Profile</title>
+    <title>Mars Colony | Neural Profile Interface</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="profile.css" />
   </head>
   <body class="dashboard-page">
     <!-- Dashboard Navigation -->
@@ -13,6 +14,7 @@
         <a href="index.html" class="dashboard-nav-logo">MARS COLONY</a>
         <ul class="dashboard-nav-links">
           <li><a href="index.html">Home</a></li>
+          <li><a href="api.html">What's Beyond Mars</a></li>
           <li><a href="login.html" id="logout-btn">Logout</a></li>
         </ul>
       </div>
@@ -27,64 +29,74 @@
     <!-- Main Content -->
     <main class="dashboard-main">
       <header class="profile-header">
-        <h1>Astronaut Profile</h1>
-        <p>Mars Colony Mission Profile and Personal Informations</p>
+        <h1 class="glowing-text">ASTRONAUT PROFILE</h1>
+        <p class="subtitle">Mars Colony Neural Interface • Alpha Clearance</p>
       </header>
 
       <div class="profile-container">
         <!-- Profile Card Section -->
         <section class="profile-card">
+          <div class="holographic-border"></div>
           <div class="profile-avatar">
-            <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=MarsAstronaut&backgroundColor=0b0d10&hairColor=ff6a3d&clothingColor=2a120b"
-              alt="Astronaut Avatar"
-              class="avatar-image"
-            />
+            <div class="avatar-ring">
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=MarsAstronaut&backgroundColor=0b0d10&hairColor=ff6a3d&clothingColor=2a120b"
+                alt="Astronaut Avatar"
+                class="avatar-image"
+              />
+            </div>
+            <div class="status-pulse"></div>
           </div>
 
           <div class="profile-info">
-            <!-- DYNAMIC: These will be filled by JavaScript -->
             <h2 class="profile-name">Loading...</h2>
             <p class="profile-email">Loading...</p>
             <p class="profile-address">
-              Habitat Unit 7B, Olympus Mons Settlement, Mars
+              Habitat Unit 7B • Olympus Mons Settlement • Mars
             </p>
 
             <div class="profile-status">
               <span class="status-indicator active"></span>
-              <span class="status-text">Mission Status: Active</span>
+              <span class="status-text">Mission Status: ACTIVE</span>
+              <span class="signal-bars">📶 ▰▰▰▰▰</span>
             </div>
           </div>
 
-          <a href="settings.html" class="settings-link-btn">
-            <span>⚙️</span> Account Settings
-          </a>
+          <div class="settings-link-wrapper">
+            <a href="settings.html" class="settings-link-btn">
+              <span class="btn-icon">⚙️</span> MANAGE ACCOUNT
+              <span class="btn-glow"></span>
+            </a>
+          </div>
         </section>
 
         <!-- Info Sections -->
         <div class="profile-sections">
-          <!-- About Me Section - DYNAMIC -->
+          <!-- About Me Section -->
           <section class="info-section">
-            <h3><span>👨‍🚀</span> About Me</h3>
+            <div class="section-header">
+              <span class="section-icon">👨‍🚀</span>
+              <h3>BIOGRAPHICAL DATA</h3>
+              <div class="section-line"></div>
+            </div>
             <div class="info-content">
-              <!-- This paragraph will be filled by JavaScript -->
               <p class="about-text">Loading your profile...</p>
 
               <div class="info-details">
                 <div class="detail-item">
-                  <span class="detail-label">Mission ID:</span>
+                  <span class="detail-label">MISSION ID</span>
                   <span class="detail-value" id="mission-id">MC-XXXX-XX</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">Clearance Level:</span>
-                  <span class="detail-value">Gamma-9</span>
+                  <span class="detail-label">CLEARANCE</span>
+                  <span class="detail-value">GAMMA-9 / ALPHA</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">Colony Role:</span>
+                  <span class="detail-label">COLONY ROLE</span>
                   <span class="detail-value" id="user-role">Loading...</span>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-label">Departure:</span>
+                  <span class="detail-label">DEPARTURE WINDOW</span>
                   <span class="detail-value" id="user-departure"
                     >Loading...</span
                   >
@@ -95,62 +107,69 @@
 
           <!-- Account Details Section -->
           <section class="info-section">
-            <h3><span>📊</span> Account Details</h3>
+            <div class="section-header">
+              <span class="section-icon">📊</span>
+              <h3>SYSTEM TELEMETRY</h3>
+              <div class="section-line"></div>
+            </div>
             <div class="info-content">
               <div class="detail-grid">
                 <div class="detail-card">
-                  <h4>Mission Progress</h4>
+                  <div class="card-glow"></div>
+                  <h4>MISSION PROGRESS</h4>
                   <div class="progress-bar">
                     <div class="progress-fill" style="width: 78%"></div>
                   </div>
-                  <span class="progress-text">78% Complete</span>
+                  <span class="progress-text">78% COMPLETE</span>
                 </div>
 
                 <div class="detail-card">
-                  <h4>Resource Allocation</h4>
+                  <h4>RESOURCE ALLOCATION</h4>
                   <div class="progress-bar">
                     <div class="progress-fill" style="width: 92%"></div>
                   </div>
-                  <span class="progress-text">92% Available</span>
+                  <span class="progress-text">92% AVAILABLE</span>
                 </div>
 
                 <div class="detail-card">
-                  <h4>Team Members</h4>
+                  <h4>TEAM MEMBERS</h4>
                   <div class="stat-value">14</div>
-                  <span class="stat-label">Active Astronauts</span>
+                  <span class="stat-label">ACTIVE ASTRONAUTS</span>
                 </div>
 
                 <div class="detail-card">
-                  <h4>Mars Days</h4>
+                  <h4>MARS DAYS</h4>
                   <div class="stat-value">1,352</div>
-                  <span class="stat-label">(Sols)</span>
+                  <span class="stat-label">SOLS</span>
                 </div>
               </div>
             </div>
           </section>
 
-          <!-- User Bio Section - DYNAMIC -->
+          <!-- Personal Log Section -->
           <section class="info-section">
-            <h3><span>📝</span> Personal Log</h3>
+            <div class="section-header">
+              <span class="section-icon">📝</span>
+              <h3>PERSONAL LOG</h3>
+              <div class="section-line"></div>
+            </div>
             <div class="info-content" id="personal-log">
               <div class="bio-entry">
                 <span class="bio-date" id="current-date"></span>
                 <p id="welcome-log">
-                  Welcome to the Mars Colony! Your journey begins now.
+                  Welcome to the Mars Colony. Your journey begins now.
                 </p>
               </div>
             </div>
           </section>
-
-          <!-- Registration Date - Will be added by JavaScript -->
         </div>
       </div>
     </main>
 
     <!-- Footer -->
     <footer class="dashboard-footer">
-      <p>Mars Colony Mission Control © 2024 - All systems operational</p>
-      <p class="footer-note">Profile data synchronized with orbital database</p>
+      <p>MARS COLONY MISSION CONTROL • ALL SYSTEMS OPERATIONAL</p>
+      <div class="footer-data-stream">▰▰▰▰▰ DATA STREAM ACTIVE ▰▰▰▰▰</div>
     </footer>
     <script src="script.js"></script>
   </body>
