@@ -1026,74 +1026,65 @@ function searchPlanet(planetName) {
   resultDiv.innerHTML =
     '<div class="loading">🔭 Exploring the solar system...</div>';
 
-  fetch("https://api.xplorerapp.net/planets.json")
+  const API_KEY = "PjuOvx6orx8WtdTrhDzXaZDh9Br6DWGt3sCYs2Ez"; // 🔑 Replace with your key from api-ninjas.com
+
+  fetch(
+    `https://api.api-ninjas.com/v1/planets?name=${encodeURIComponent(name)}`,
+    {
+      headers: { "X-Api-Key": API_KEY },
+    },
+  )
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP error ${response.status}`);
       return response.json();
     })
     .then((data) => {
-      // Extract planets array – handle various response shapes
-      let planetsList = [];
-      if (Array.isArray(data)) {
-        planetsList = data;
-      } else if (data.planets && Array.isArray(data.planets)) {
-        planetsList = data.planets;
-      } else if (data.results && Array.isArray(data.results)) {
-        planetsList = data.results;
-      } else if (data.data && Array.isArray(data.data)) {
-        planetsList = data.data;
-      } else {
-        planetsList = data; // fallback: assume data is the array
-      }
-
-      const planet = planetsList.find(
-        (p) => p.name && p.name.toLowerCase() === name.toLowerCase(),
-      );
-
-      if (planet) {
-        // Format mass in scientific notation nicely
-        const massFormatted = planet.mass_kg
-          ? planet.mass_kg.toExponential(2)
-          : "N/A";
-        // Build atmosphere description if available
-        let atmosphereText = "No atmosphere data";
-        if (planet.atmosphere && planet.atmosphere.composition) {
-          const comp = planet.atmosphere.composition;
-          atmosphereText = `🌬️ Nitrogen: ${comp.nitrogen_percent}%, Oxygen: ${comp.oxygen_percent}%`;
-        }
-
-        resultDiv.innerHTML = `
-          <div class="planet-result">
-            <h2>🪐 ${planet.name}</h2>
-            <div class="planet-detail"><strong>Type</strong> ${planet.type || "Unknown"}</div>
-            <div class="planet-detail"><strong>Radius</strong> ${planet.radius_km?.toLocaleString() || "N/A"} km</div>
-            <div class="planet-detail"><strong>Mass</strong> ${massFormatted} kg</div>
-            <div class="planet-detail"><strong>Gravity</strong> ${planet.gravity_m_s2 || "N/A"} m/s²</div>
-            <div class="planet-detail"><strong>Distance from Earth</strong> ${planet.distance_from_earth_au ?? "N/A"} AU</div>
-            <div class="planet-detail"><strong>Orbit Period</strong> ${planet.orbit_period_days?.toFixed(2) || "N/A"} days</div>
-            <div class="planet-detail"><strong>Avg. Temperature</strong> ${planet.average_temperature_celsius ?? "N/A"} °C</div>
-            <div class="planet-fact">✨ ${atmosphereText}</div>
-            <button class="save-btn" onclick='savePlanetFromData(
-              "${planet.name}",
-              ${planet.radius_km || "null"},
-              ${planet.mass_kg || "null"},
-              ${planet.gravity_m_s2 || "null"},
-              ${planet.distance_from_earth_au ?? "null"},
-              ${planet.orbit_period_days || "null"},
-              ${planet.average_temperature_celsius ?? "null"},
-              "${planet.type || "Unknown"}",
-              "${atmosphereText.replace(/"/g, '\\"')}"
-            )'>💾 SAVE TO HISTORY</button>
-          </div>
-        `;
-      } else {
-        // ✅ Simplified error message – no long list of planet names
+      if (!data || data.length === 0) {
         resultDiv.innerHTML = `
           <div class="error-message">
             ❌ Nothing found for "${name}". Please try another name.
           </div>
         `;
+        return;
       }
+
+      const planet = data[0];
+
+      // Format mass
+      const massFormatted = planet.mass ? planet.mass.toExponential(2) : "N/A";
+
+      // Temperature (API returns Kelvin — convert to Celsius)
+      const tempCelsius = planet.temperature
+        ? (planet.temperature - 273.15).toFixed(1)
+        : "N/A";
+
+      // Distance (API returns in AU already)
+      const distance = planet.semi_major_axis ?? "N/A";
+
+      resultDiv.innerHTML = `
+        <div class="planet-result">
+          <h2>🪐 ${planet.name}</h2>
+          <div class="planet-detail"><strong>Type</strong> Solar System Planet</div>
+          <div class="planet-detail"><strong>Radius</strong> ${planet.radius ? (planet.radius * 6371).toLocaleString() : "N/A"} km</div>
+          <div class="planet-detail"><strong>Mass</strong> ${massFormatted} kg</div>
+          <div class="planet-detail"><strong>Gravity</strong> ${planet.gravity ?? "N/A"} m/s²</div>
+          <div class="planet-detail"><strong>Distance from Sun</strong> ${distance} AU</div>
+          <div class="planet-detail"><strong>Orbit Period</strong> ${planet.period ? planet.period.toFixed(2) : "N/A"} days</div>
+          <div class="planet-detail"><strong>Avg. Temperature</strong> ${tempCelsius} °C</div>
+          <div class="planet-fact">✨ Inclination: ${planet.inclination ?? "N/A"}°</div>
+          <button class="save-btn" onclick='savePlanetFromData(
+            "${planet.name}",
+            ${planet.radius ? (planet.radius * 6371).toFixed(0) : null},
+            ${planet.mass || null},
+            ${planet.gravity || null},
+            ${planet.semi_major_axis ?? null},
+            ${planet.period || null},
+            ${tempCelsius !== "N/A" ? tempCelsius : null},
+            "Solar System Planet",
+            "No atmosphere data"
+          )'>💾 SAVE TO HISTORY</button>
+        </div>
+      `;
     })
     .catch((error) => {
       console.error("API error:", error);
